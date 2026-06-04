@@ -1,0 +1,445 @@
+<section>
+  <p class="article-lede">A harness is the system that turns intelligence into product behavior. Formally, LLM harnesses are &ldquo;the code that determines what to store, retrieve and show to the model&rdquo;<sup><a href="#ref-1">1</a></sup>. The term is a more precise alternative to &ldquo;GPT wrapper,&rdquo; but harnesses around models have existed for more than a decade<sup><a href="#ref-2">2</a></sup>.</p>
+  <details class="formal-lens">
+    <summary><span class="formal-lens-kicker">Formal lens</span><span class="formal-lens-title">Definitions of <code>M</code> and <code>H</code></span></summary>
+    <div class="formal-lens-body">
+      <div class="formal-thesis">
+        <span class="formal-thesis-label">Core object</span>
+        <strong><code>H(M)</code></strong>
+        <span>LLM harnesses can be defined as <code>H(M)</code>: persistent product software composing around callable mathematical functions.</span>
+      </div>
+      <dl class="formal-def-list formal-def-list-compact">
+        <div><dt><code>M_i</code><span>model</span></dt><dd><strong>Computes a mathematical function</strong> <code>X_i -&gt; Y_i</code>. This can be <code>y = ax + b</code>, a calibrated score, an embedding function, a bandit, a deep ranker, or an LLM.</dd></div>
+        <div><dt><code>H_j</code><span>harness component</span></dt><dd><strong>Persistent software that encodes the product system.</strong> It owns lookup, business logic, validation, routing, orchestration, rendering, logging, policy, process control, and the rules for using model outputs.</dd></div>
+        <div><dt><code>H(M)</code><span>product system</span></dt><dd><strong>The composition of harnesses plus models that becomes product behavior.</strong> The model produces values; the harness turns those values into actions, interface state, decisions, traces, and user-visible output.</dd></div>
+      </dl>
+      <pre class="formal-equation"><code>M_i : X_i -&gt; Y_i
+H_j : (state_t, data_t, rules, model_outputs) -&gt; (state_{t+1}, action_j, trace_j)
+
+H     = H_n o ... o H_1 o H_0
+H(M)  = H(x; M_0, ... , M_k, state, data, rules)
+P_t   = product behavior emitted by H(M)</code></pre>
+      <div class="formal-lens-note">The key distinction is where agency sits. <code>M_i</code> computes. <code>H_j</code> remembers, retrieves, filters, validates, routes, renders, logs, and enforces policy. <code>H(M)</code> is the full product system the user actually experiences.</div>
+    </div>
+  </details>
+  <h2>Recommendation systems were early harnesses</h2>
+  <p>Systems like Google search, Instagram, and LinkedIn are harnesses around recommendation and ranking models<sup><a href="#ref-3">3</a></sup>. The models underneath are split into many specialized submodels: encoding a query into an embedding, retrieving results based on the query plus user preferences, reranking those results to prune downstream computation, stitching together content most likely to hold attention, ranking and auctioning that content given the context of what else is on the page, and finally generating an interface around the selected set.</p>
+  <figure class="figure-block rec-harness-figure" id="fig-1" aria-labelledby="fig-1-cap">
+    <div class="rec-harness-card">
+      <div class="rec-pipeline" role="img" aria-label="A responsive workflow showing a search request moving through retrieval, generation, ranking, and allocation harnesses, with state and data inputs on the left, model functions on the right, stage outputs between harnesses, and feedback traces updating the system">
+        <div class="rec-request-node">
+          <span>input</span>
+          <strong>Search request</strong>
+          <code>x_t = query + user + context</code>
+        </div>
+
+        <ol class="rec-pipeline-stages">
+          <li class="rec-pipeline-stage" data-stage="retrieval">
+            <div class="rec-side-card rec-side-data">
+              <span>state / data</span>
+              <strong>Indexes + entities</strong>
+              <p>Keyword tables, entity stores, semantic indexes, eligibility lists.</p>
+            </div>
+            <div class="rec-core-card">
+              <div class="rec-core-head"><code>H_0</code><strong>Retrieval</strong><small>request -> candidate set</small></div>
+              <ul>
+                <li><code>H_0.0</code><span>Frame request and normalize context.</span></li>
+                <li><code>H_0.1</code><span>Fan out to lookup and retrieval systems.</span></li>
+                <li><code>H_0.2</code><span>Apply eligibility, quality, and policy filters.</span></li>
+                <li><code>H_0.3</code><span>Prune and pack candidates for downstream work.</span></li>
+              </ul>
+              <div class="rec-stage-output"><code>C_t</code><span>candidate set</span></div>
+            </div>
+            <div class="rec-side-card rec-side-model">
+              <span>models</span>
+              <strong><code>M_0.*</code> retrieval functions</strong>
+              <ul class="rec-model-list">
+                <li><code>M_0.0</code><span>Query understanding -> vector representation of the query</span></li>
+                <li><code>M_0.1</code><span>Query rewrite</span></li>
+                <li><code>M_0.2</code><span>Vector retrieval (ANN)</span></li>
+                <li><code>M_0.3</code><span>Reranking</span></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="rec-pipeline-stage" data-stage="generation">
+            <div class="rec-side-card rec-side-data">
+              <span>state / data</span>
+              <strong>Assets + policy</strong>
+              <p>Templates, creative assets, copy rules, validation constraints.</p>
+            </div>
+            <div class="rec-core-card">
+              <div class="rec-core-head"><code>H_1</code><strong>Generation</strong><small>candidates -> content variants</small></div>
+              <ul>
+                <li><code>H_1.0</code><span>Look up eligible assets for each candidate.</span></li>
+                <li><code>H_1.1</code><span>Validate copy, brand, safety, and format rules.</span></li>
+                <li><code>H_1.2</code><span>Reduce inputs before expensive model calls.</span></li>
+                <li><code>H_1.3</code><span>Allocate, generate, or assemble content variants.</span></li>
+              </ul>
+              <div class="rec-stage-output"><code>K_t</code><span>content variants</span></div>
+            </div>
+            <div class="rec-side-card rec-side-model">
+              <span>models</span>
+              <strong><code>M_1.*</code> generation functions</strong>
+              <ul class="rec-model-list">
+                <li><code>M_1.0</code><span>Asset generation</span></li>
+                <li><code>M_1.1</code><span>Ad copy generation</span></li>
+                <li><code>M_1.2</code><span>Policy filtration</span></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="rec-pipeline-stage" data-stage="ranking">
+            <div class="rec-side-card rec-side-data">
+              <span>state / data</span>
+              <strong>Counts + features</strong>
+              <p>Clicks, dwell, conversion counts, embeddings, metadata, query features.</p>
+            </div>
+            <div class="rec-core-card">
+              <div class="rec-core-head"><code>H_2</code><strong>Ranking</strong><small>variants -> scored set</small></div>
+              <ul>
+                <li><code>H_2.0</code><span>Join metadata and historical performance counts.</span></li>
+                <li><code>H_2.1</code><span>Build features and attach embeddings.</span></li>
+                <li><code>H_2.2</code><span>Run heavier scorers for relevance, click, and value.</span></li>
+                <li><code>H_2.3</code><span>Calibrate and normalize scores across candidates.</span></li>
+              </ul>
+              <div class="rec-stage-output"><code>S_t</code><span>scored set</span></div>
+            </div>
+            <div class="rec-side-card rec-side-model">
+              <span>models</span>
+              <strong><code>M_2.*</code> ranking functions</strong>
+              <ul class="rec-model-list">
+                <li><code>M_2.0</code><span>Calculate <code>P(click)</code></span></li>
+                <li><code>M_2.1</code><span>Calculate relevance</span></li>
+                <li><code>M_2.2</code><span>Bid / value prediction</span></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="rec-pipeline-stage" data-stage="allocation">
+            <div class="rec-side-card rec-side-data">
+              <span>state / data</span>
+              <strong>Surface rules</strong>
+              <p>Layout policies, market rules, auction constraints, device and page context.</p>
+            </div>
+            <div class="rec-core-card">
+              <div class="rec-core-head"><code>H_3</code><strong>Allocation</strong><small>scores -> rendered page</small></div>
+              <ul>
+                <li><code>H_3.0</code><span>Frame the surface and available slots.</span></li>
+                <li><code>H_3.1</code><span>Run auction, selection, and suppression logic.</span></li>
+                <li><code>H_3.2</code><span>Search layout permutations and page policies.</span></li>
+                <li><code>H_3.3</code><span>Render the surface and write the execution trace.</span></li>
+              </ul>
+              <div class="rec-stage-output"><code>Y_t</code><span>page allocation</span></div>
+            </div>
+            <div class="rec-side-card rec-side-model">
+              <span>models</span>
+              <strong><code>M_3.*</code> allocation functions</strong>
+              <ul class="rec-model-list">
+                <li><code>M_3.0</code><span>Allocate ad copies across the webpage</span></li>
+                <li><code>M_3.1</code><span>Run ad auction</span></li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+
+        <div class="rec-render-node">
+          <span>output</span>
+          <strong>Rendered surface</strong>
+          <code>page / feed / answer + tau_t trace</code>
+        </div>
+
+        <div class="rec-feedback-node">
+          <code>tau_t</code>
+          <span>Feedback updates stores, model training data, policies, and future harness behavior.</span>
+        </div>
+      </div>
+    </div>
+    <figcaption id="fig-1-cap"><span class="figure-num">Fig.&nbsp;1</span> A representative search-style recommendation workflow. A product such as Google Search can be read through this lens: request context flows through retrieval, generation, ranking, and allocation harnesses before becoming a rendered page. This is a conceptual model, not a claim about any exact implementation. <a href="/recommendation-harness">Open the full diagram</a>.</figcaption>
+  </figure>
+  <p>These submodels share embeddings, pass hidden layers downstream into later models like RNNs, and sit inside an intricate harness that has to return results in well under a second. Internally they were called infrastructure, and teams of hundreds maintained them to make the product faster, higher quality, more personalized, cheaper to serve, and compliance-safe. The underlying models were proprietary; the harnesses around them were a meaningful piece of the moat. OpenAI changed that paradigm by exposing frontier intelligence through an API, which let anyone build intelligent systems on top and turned the surrounding infrastructure into the most interesting layer to discuss.</p>
+  <h2>The static-harness era</h2>
+  <p>The first LLM harnesses that caught my eye were ChatGPT, Perplexity, and Cursor. Each was carefully crafted by a small team to give intelligence an interface for people. It quickly became clear that post-training a model against the harness improved quality, latency, and efficiency, and that frontier labs could win product fit by pairing their smartest model with their own harness. A static harness is effective to train against: the range of user behaviors is well understood, on-policy interactions with the harness are verifiable, and a judge model does not need to learn a new harness for every evaluation. We see this in practice with Codex. Opus&nbsp;4.5 was a strong coding model, but GPT-5.3-Codex put up stronger SWE-Bench Pro numbers once it was trained and shipped through the Codex harness.<sup><a href="#ref-7">7</a></sup></p>
+  <p>Architecturally, the model still uses next-token prediction to learn patterns across training examples and applies them at inference. Harnesses like Codex or Claude Code give the model a runtime to execute code, tools to retrieve relevant context, and tools to take action. They are improved by software updates downstream of the engineering team&rsquo;s code and by adding new tools, often called skills or plugins. Beyond that, the harness is fixed and roughly the same for every user.</p>
+  <details class="formal-lens">
+    <summary><span class="formal-lens-kicker">Formal lens</span><span class="formal-lens-title">Why a fixed harness trains well</span></summary>
+    <div class="formal-lens-body">
+      <div>In the static-harness regime, the product software <code>H</code> is mostly fixed while the model family, prompts, tools, and post-training data improve around that stable interface.</div>
+      <pre><code>given fixed H
+M* = argmax_{M in model_family} E[ Q(tau(H(x; M))) ]</code></pre>
+      <div class="formal-lens-note">Because <code>H</code> is stable, traces stay comparable across runs. The model can learn the habits of that product harness: what context is packed, which tools appear, how actions are validated, and what terminal states count as success.</div>
+    </div>
+  </details>
+  <h2>Meta-harnesses and per-user evolution</h2>
+  <p>A recent paper on meta-harnesses<sup><a href="#ref-1">1</a></sup> proposes that letting a model optimize the harness around its task leads to better performance. By searching over the harness, viewing prior candidate traces, and proposing new options, the outer loop lets the application improve in quality, token usage, and speed. The harness becomes a set of parameters to optimize, not a fixed surface that only changes with a human in the loop.</p>
+  <p>Autonomously improving harnesses change the paradigm of user-facing applications: from fixed general interfaces with a fringe of customizations, to interfaces that adapt per user. Dynamic per-user harnesses around LLMs have not been widely adopted yet, but this is the area Relayer is moving on quickly. The previous generation of harnesses &mdash; Google, Instagram, and so on &mdash; is a good reference for what personalized harnesses can look like.</p>
+  <details class="formal-lens">
+    <summary><span class="formal-lens-kicker">Formal lens</span><span class="formal-lens-title">Moving search from <code>M</code> to <code>H</code></span></summary>
+    <div class="formal-lens-body">
+      <div>The shift from <code>M</code> to <code>H</code> is not that the same model must rewrite itself. It is that model intelligence can now operate on the harness layer. <code>H_t</code> calls <code>M_task</code> for the user-facing run; <code>M_meta</code> may be the same model or a separate model that proposes the next harness.</div>
+      <div class="formal-hover-hint">Hover or focus a symbol for its role.</div>
+      <div class="h-shift-board" aria-label="Formal loop showing runtime, feedback, proposal, beam search, and harness selection">
+        <div class="h-shift-row">
+          <span class="h-shift-step">run</span>
+          <span class="h-symbol" tabindex="0"><code>H_t</code><span class="h-symbol-pop">The current product harness: memory, retrieval, tools, prompts, validation, state, and interface behavior.</span></span>
+          <span class="h-shift-op">calls</span>
+          <span class="h-symbol h-symbol-dark" tabindex="0"><code>M_task</code><span class="h-symbol-pop">The model used inside the harness to serve the user-facing task.</span></span>
+          <span class="h-shift-op">on</span>
+          <span class="h-symbol" tabindex="0"><code>x_t</code><span class="h-symbol-pop">The current task, request, user context, and environment state.</span></span>
+          <span class="h-shift-op">-></span>
+          <span class="h-symbol" tabindex="0"><code>Y_t</code><span class="h-symbol-pop">The emitted product behavior: answer, page, workflow state, tool action, diff, or rendered interface.</span></span>
+          <span class="h-symbol" tabindex="0"><code>tau_t</code><span class="h-symbol-pop">The execution trace: inputs, retrieved context, model calls, tool calls, validation results, state changes, latency, cost, and output.</span></span>
+        </div>
+        <div class="h-shift-row">
+          <span class="h-shift-step">observe</span>
+          <span class="h-symbol" tabindex="0"><code>Feedback</code><span class="h-symbol-pop">A function over the output and trace: explicit feedback, implicit behavior, judge scores, task success, errors, and downstream outcomes.</span></span>
+          <span class="h-shift-op">(</span>
+          <span class="h-symbol" tabindex="0"><code>Y_t</code><span class="h-symbol-pop">The product output being judged.</span></span>
+          <span class="h-symbol" tabindex="0"><code>tau_t</code><span class="h-symbol-pop">The trace explaining how the output happened.</span></span>
+          <span class="h-shift-op">)</span>
+          <span class="h-shift-op">-></span>
+          <span class="h-symbol" tabindex="0"><code>f_t</code><span class="h-symbol-pop">The feedback signal produced from the output, trace, user, and environment.</span></span>
+        </div>
+        <div class="h-shift-row">
+          <span class="h-shift-step">score</span>
+          <span class="h-symbol" tabindex="0"><code>Q</code><span class="h-symbol-pop">The quality function that turns traces and feedback into a comparable score.</span></span>
+          <span class="h-shift-op">(</span>
+          <span class="h-symbol" tabindex="0"><code>tau_t</code><span class="h-symbol-pop">The execution trace being evaluated.</span></span>
+          <span class="h-symbol" tabindex="0"><code>f_t</code><span class="h-symbol-pop">The feedback signal attached to the trace.</span></span>
+          <span class="h-shift-op">)</span>
+          <span class="h-shift-op">-></span>
+          <span class="h-symbol" tabindex="0"><code>q_t</code><span class="h-symbol-pop">The quality signal used by the improvement loop.</span></span>
+        </div>
+        <div class="h-shift-row">
+          <span class="h-shift-step">propose</span>
+          <span class="h-symbol h-symbol-dark" tabindex="0"><code>M_meta</code><span class="h-symbol-pop">The model used by the improvement loop to inspect traces and propose harness changes. It may be different from M_task.</span></span>
+          <span class="h-shift-op">uses</span>
+          <span class="h-symbol" tabindex="0"><code>tau_&lt;=t</code><span class="h-symbol-pop">Prior execution traces available to the meta model.</span></span>
+          <span class="h-symbol" tabindex="0"><code>f_&lt;=t</code><span class="h-symbol-pop">Prior feedback signals attached to those traces.</span></span>
+          <span class="h-symbol" tabindex="0"><code>q_&lt;=t</code><span class="h-symbol-pop">Prior quality scores used to guide proposals.</span></span>
+          <span class="h-shift-op">-></span>
+          <span class="h-symbol" tabindex="0"><code>Delta H_t</code><span class="h-symbol-pop">A proposed edit to the harness: retrieval policy, memory policy, prompt, tool route, validator, layout, workflow, or interface behavior.</span></span>
+        </div>
+        <div class="h-shift-row">
+          <span class="h-shift-step">search</span>
+          <span class="h-symbol" tabindex="0"><code>B_d</code><span class="h-symbol-pop">The beam of candidate harnesses at search depth d.</span></span>
+          <span class="h-shift-op">=</span>
+          <span class="h-symbol" tabindex="0"><code>top_k</code><span class="h-symbol-pop">Keeps the best k candidate harnesses instead of committing to the first proposed change.</span></span>
+          <span class="h-shift-op">(</span>
+          <span class="h-symbol" tabindex="0"><code>apply(H, Delta H)</code><span class="h-symbol-pop">Creates a candidate harness by applying a proposed change to an existing harness in the beam.</span></span>
+          <span class="h-shift-op">)</span>
+        </div>
+        <div class="h-shift-row h-shift-row-final">
+          <span class="h-shift-step">select</span>
+          <span class="h-symbol" tabindex="0"><code>B_D</code><span class="h-symbol-pop">The final beam after the search budget or depth limit is reached.</span></span>
+          <span class="h-shift-op">-></span>
+          <span class="h-symbol h-symbol-result" tabindex="0"><code>H_{t+1}</code><span class="h-symbol-pop">The next accepted harness, used by the product on the next run.</span></span>
+        </div>
+      </div>
+      <div class="formal-lens-note">Feedback is the hinge. The system first observes whether <code>Y_t</code> worked, then asks <code>M_meta</code> to generate possible harness changes. Beam search keeps several candidate harnesses alive, scores them, and selects the next harness only after a candidate improves the quality target under the system constraints.</div>
+    </div>
+  </details>
+</section>
+<figure class="figure-block" id="fig-2" aria-labelledby="fig-2-cap">
+  <svg class="figure-svg meta-loop-svg" viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A meta-harness loop showing task execution, feedback, scoring, model-proposed harness changes, beam search, and selection of the next harness">
+    <defs>
+      <marker id="meta-loop-arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M0,0 L8,5 L0,10 Z" fill="var(--ink)"/>
+      </marker>
+      <marker id="meta-loop-soft-arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M0,0 L8,5 L0,10 Z" fill="var(--muted)"/>
+      </marker>
+    </defs>
+
+    <rect class="meta-loop-lane" x="24" y="24" width="912" height="146" rx="3"/>
+    <text x="44" y="50" class="meta-loop-kicker">runtime: H_t calls M_task</text>
+    <g class="meta-loop-node" transform="translate(58 82)">
+      <rect width="110" height="62" rx="3"/>
+      <text x="14" y="24" class="meta-loop-code">x_t</text>
+      <text x="14" y="44" class="meta-loop-sub">task + context</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(222 62)">
+      <rect width="190" height="70" rx="3"/>
+      <text x="16" y="26" class="meta-loop-code">H_t</text>
+      <text x="16" y="48" class="meta-loop-title">current harness</text>
+      <text x="16" y="64" class="meta-loop-sub">memory / retrieval / tools / UI</text>
+    </g>
+    <g class="meta-loop-dark" transform="translate(255 138)">
+      <rect width="125" height="24" rx="3"/>
+      <text x="62.5" y="16" text-anchor="middle">M_task</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(502 82)">
+      <rect width="130" height="62" rx="3"/>
+      <text x="14" y="24" class="meta-loop-code">Y_t</text>
+      <text x="14" y="44" class="meta-loop-sub">product output</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(710 82)">
+      <rect width="170" height="62" rx="3"/>
+      <text x="14" y="24" class="meta-loop-code">tau_t</text>
+      <text x="14" y="44" class="meta-loop-sub">execution trace</text>
+    </g>
+    <line class="meta-loop-arrow" x1="168" y1="113" x2="214" y2="113" marker-end="url(#meta-loop-arrow)"/>
+    <line class="meta-loop-arrow" x1="412" y1="113" x2="494" y2="113" marker-end="url(#meta-loop-arrow)"/>
+    <line class="meta-loop-arrow" x1="632" y1="113" x2="702" y2="113" marker-end="url(#meta-loop-arrow)"/>
+    <text x="430" y="101" class="meta-loop-sub">emits</text>
+    <text x="650" y="101" class="meta-loop-sub">records</text>
+
+    <rect class="meta-loop-lane" x="24" y="196" width="912" height="124" rx="3"/>
+    <text x="44" y="222" class="meta-loop-kicker">feedback before Delta H</text>
+    <circle class="meta-loop-join" cx="650" cy="184" r="4"/>
+    <path class="meta-loop-arrow-soft" d="M567 144 L626 178" marker-end="url(#meta-loop-soft-arrow)"/>
+    <path class="meta-loop-arrow-soft" d="M795 144 L674 178" marker-end="url(#meta-loop-soft-arrow)"/>
+    <path class="meta-loop-arrow-soft" d="M650 188 L650 206 L420 206 L420 222" marker-end="url(#meta-loop-soft-arrow)"/>
+    <g class="meta-loop-node" transform="translate(300 230)">
+      <rect width="240" height="52" rx="3"/>
+      <text x="14" y="22" class="meta-loop-code">Feedback(...)</text>
+      <text x="14" y="40" class="meta-loop-sub">Y_t, tau_t, user, environment</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(570 230)">
+      <rect width="170" height="52" rx="3"/>
+      <text x="14" y="22" class="meta-loop-code">Q(tau_t, f_t)</text>
+      <text x="14" y="40" class="meta-loop-sub">score trace + feedback</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(790 230)">
+      <rect width="116" height="52" rx="3"/>
+      <text x="14" y="22" class="meta-loop-code">q_t</text>
+      <text x="14" y="40" class="meta-loop-sub">quality signal</text>
+    </g>
+    <line class="meta-loop-arrow" x1="540" y1="256" x2="562" y2="256" marker-end="url(#meta-loop-arrow)"/>
+    <line class="meta-loop-arrow" x1="740" y1="256" x2="782" y2="256" marker-end="url(#meta-loop-arrow)"/>
+    <text x="548" y="245" class="meta-loop-sub">f_t</text>
+
+    <rect class="meta-loop-lane" x="24" y="348" width="912" height="126" rx="3"/>
+    <text x="44" y="374" class="meta-loop-kicker">beam search over candidate harnesses</text>
+    <g class="meta-loop-dark" transform="translate(742 404)">
+      <rect width="130" height="44" rx="3"/>
+      <text x="65" y="18" text-anchor="middle">M_meta</text>
+      <text x="65" y="34" text-anchor="middle" class="meta-loop-dark-sub">reads traces</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(545 404)">
+      <rect width="160" height="44" rx="3"/>
+      <text x="14" y="19" class="meta-loop-code">Delta H_t</text>
+      <text x="14" y="35" class="meta-loop-sub">candidate edits</text>
+    </g>
+    <g class="meta-loop-beam" transform="translate(238 386)">
+      <rect width="260" height="78" rx="3"/>
+      <text x="14" y="22" class="meta-loop-title">B_d = top_k candidates</text>
+      <g class="meta-loop-candidate" transform="translate(14 34)">
+        <rect width="66" height="22" rx="2"/>
+        <text x="33" y="15" text-anchor="middle">H^1</text>
+      </g>
+      <g class="meta-loop-candidate" transform="translate(92 34)">
+        <rect width="66" height="22" rx="2"/>
+        <text x="33" y="15" text-anchor="middle">H^2</text>
+      </g>
+      <g class="meta-loop-candidate" transform="translate(170 34)">
+        <rect width="66" height="22" rx="2"/>
+        <text x="33" y="15" text-anchor="middle">H^3</text>
+      </g>
+      <text x="14" y="70" class="meta-loop-sub">score with Q_hat; keep beam width k</text>
+    </g>
+    <g class="meta-loop-node" transform="translate(58 404)">
+      <rect width="116" height="44" rx="3"/>
+      <text x="14" y="19" class="meta-loop-code">H_{t+1}</text>
+      <text x="14" y="35" class="meta-loop-sub">selected harness</text>
+    </g>
+    <path class="meta-loop-arrow-soft" d="M848 282 L848 330 L807 330 L807 396" marker-end="url(#meta-loop-soft-arrow)"/>
+    <line class="meta-loop-arrow" x1="742" y1="426" x2="713" y2="426" marker-end="url(#meta-loop-arrow)"/>
+    <line class="meta-loop-arrow" x1="545" y1="426" x2="506" y2="426" marker-end="url(#meta-loop-arrow)"/>
+    <line class="meta-loop-arrow" x1="238" y1="426" x2="182" y2="426" marker-end="url(#meta-loop-arrow)"/>
+    <path class="meta-loop-return" d="M58 426 L38 426 L38 72 L214 72" marker-end="url(#meta-loop-soft-arrow)"/>
+    <text x="50" y="398" class="meta-loop-sub">next run uses selected H</text>
+  </svg>
+  <figcaption id="fig-2-cap"><span class="figure-num">Fig.&nbsp;2</span> A meta-harness loop for moving from <code>M</code> optimization to <code>H</code> optimization. The runtime harness calls <code>M_task</code> to emit <code>Y_t</code> and record <code>tau_t</code>; feedback and <code>Q</code> produce <code>q_t</code>; <code>M_meta</code> proposes candidate <code>Delta H</code> edits; beam search keeps the best harness variants before selecting <code>H_{t+1}</code>.</figcaption>
+</figure>
+<section>
+  <p>Large-scale consumer systems allocate content using ML models powered by aggregate counts and per-user data. User interactions become a vector representation that proxies that user&rsquo;s preferences. Counts data aggregates interactions across all users and acts as a signal for ranking candidates<sup><a href="#ref-4">4</a></sup>. At scale, with fast updates, this acts as a proxy for content quality or relevance. Fast updates are what let search results and timelines react to real-world events; the user preference vector is what lets the system predict what you want to see. These systems lean on scale and simple signals like clicks to personalize the product for consumers.</p>
+  <p>Counts data is not just model training data. It is live harness memory. Every rendered feed produces a trace; every impression, like, skip, share, dwell event, hide, or report updates aggregate state. On the next request, that state changes what the harness retrieves, suppresses, scores, and allocates. The model may be the same mathematical function, but the product behavior changes because <code>H_t</code> is now reading <code>C_{t+1}</code>.</p>
+  <details class="formal-lens">
+    <summary><span class="formal-lens-kicker">Formal lens</span><span class="formal-lens-title">Counts as harness memory</span></summary>
+    <div class="formal-lens-body">
+      <div class="formal-thesis">
+        <span class="formal-thesis-label">State update</span>
+        <strong><code>C_t</code></strong>
+        <span>Counts are persistent harness state: impressions, likes, skips, shares, dwell, hides, reports, conversions, and follows.</span>
+      </div>
+      <pre class="formal-equation"><code>(Y_t, tau_t) = H_t(C_t)(x_t; M, rules)
+f_t          = Feedback(Y_t, tau_t)
+C_{t+1}      = update_counts(C_t, f_t)
+H_{t+1}      = H_t[C_t := C_{t+1}]</code></pre>
+      <pre class="formal-equation"><code>Bandit / RL special case:
+a_t          = pi_t(x_t; C_t)
+Y_t          = H_t(x_t; a_t, M, rules)
+r_t          = reward(Y_t, tau_t)
+C_{t+1}      = update_bandit_state(C_t, a_t, r_t)
+pi_{t+1}     = policy(C_{t+1})</code></pre>
+      <div class="formal-lens-note">The bracket notation means the harness code may be the same, but the persistent state it reads has changed. A multi-armed or contextual bandit is one RL-style instance of this pattern: <code>pi_t</code> chooses an action such as an item, creative, layout, or feed mix; <code>r_t</code> is the reward signal from clicks, dwell, conversion, hides, or reports; and <code>C_t</code> stores the reward evidence used by the next policy. Counts-based recommendation infrastructure is broader because the same state can also affect retrieval, filtering, ranking, allocation, monitoring, and policy.</div>
+    </div>
+  </details>
+  <figure class="figure-block counts-memory-figure" id="fig-3" aria-labelledby="fig-3-cap">
+    <div class="counts-memory-card" role="img" aria-label="Counts data as harness memory for an Instagram-like feed">
+      <div class="counts-diagram-kicker">IG-like feed loop</div>
+      <div class="counts-feed-strip">
+        <div class="counts-post-card">
+          <span>feed shown</span>
+          <strong>Post A</strong>
+          <small>liked + saved</small>
+        </div>
+        <div class="counts-post-card">
+          <span>feed shown</span>
+          <strong>Reel B</strong>
+          <small>skipped quickly</small>
+        </div>
+        <div class="counts-post-card">
+          <span>feed shown</span>
+          <strong>Post C</strong>
+          <small>shared + followed</small>
+        </div>
+      </div>
+      <div class="counts-down-arrow" aria-hidden="true"></div>
+      <div class="counts-memory-store">
+        <span><code>C_t</code></span>
+        <strong>counts memory</strong>
+        <p>impressions / likes / skips / dwell / saves / follows / hides / reports</p>
+        <div class="counts-chip-row">
+          <code>skip_rate</code>
+          <code>share_velocity</code>
+          <code>topic_affinity</code>
+          <code>report_rate</code>
+        </div>
+      </div>
+      <div class="counts-down-arrow" aria-hidden="true"></div>
+      <div class="counts-harness-row">
+        <div class="counts-harness-step">
+          <code>H_retrieve(C_t)</code>
+          <strong>candidate pool</strong>
+          <small>pull more or fewer posts</small>
+        </div>
+        <div class="counts-harness-step">
+          <code>H_filter(C_t)</code>
+          <strong>suppression</strong>
+          <small>drop stale, repeated, reported items</small>
+        </div>
+        <div class="counts-harness-step">
+          <code>H_rank(C_t, M)</code>
+          <strong>ranking harness</strong>
+          <small>attach historical and user-level signals</small>
+        </div>
+        <div class="counts-harness-step">
+          <code>H_alloc(C_t)</code>
+          <strong>next feed</strong>
+          <small>choose friends / reels / ads / suggested mix</small>
+        </div>
+      </div>
+      <div class="counts-loop-note">
+        <code>Y_{t+1}</code>
+        <span>Updated counts change the next harness run before any model weights need to change.</span>
+      </div>
+    </div>
+    <figcaption id="fig-3-cap"><span class="figure-num">Fig.&nbsp;3</span> Counts data as harness memory. Interactions in the feed update aggregate counts, which the next retrieval, filtering, ranking, and allocation pass reads before rendering a new feed. This is a conceptual IG-like feed loop, not a claim about any exact implementation.</figcaption>
+  </figure>
+  <p>Sufficient data and discrete feedback signals were the requirements that kept many consumer applications from becoming personalized. LLMs make it possible to get clear insights with orders of magnitude less data because they are trained on the sum of the public internet. They also turn text feedback into an actionable signal. Consumer applications can now use screenshots, videos, text feedback, and interaction timelines as the traces an outer meta-harness loop uses to propose the next version of the harness. User data becomes the trace signal that improves the harness.</p>
+  <h2>What still needs to work</h2>
+  <p>Speed of evolution and a suitable quality function are the two biggest open problems in the auto-improving interfaces I have been building for Relayer. A five-plus minute overhead on iterating the dynamic harness hurts user engagement. Each iteration walks through prior traces, proposes different evolutions, and evaluates them before pushing to the user. The quality function that converts a user&rsquo;s session into product-quality feedback is essential for making harness iterations improve consistently. Task completeness, user velocity, and short-term task quality need to be measured during the task itself. Long-term feedback signals then need to assign credit back to the different harness iterations that shaped the session.</p>
+  <p>Two prototypes for how the Relayer harness will evolve around a user&rsquo;s task: DocLayer<sup><a href="#ref-5">5</a></sup> and the Meta IDE workspace<sup><a href="#ref-6">6</a></sup>.</p>
+</section>

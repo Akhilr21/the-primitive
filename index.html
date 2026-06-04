@@ -26,8 +26,8 @@
       </a>
       <nav class="topnav" aria-label="Page">
         <a href="#primitive-map">Primitive Map</a>
-        <a href="#article">Article</a>
-        <a href="#artifacts">Artifacts</a>
+        <a href="#series">Series</a>
+        <a href="#article">Reader</a>
       </nav>
       <a class="source-link" href="https://docs.google.com/document/d/1uefuLa-DUoFzvlmSFwC8kbj3hrRPAN7m/edit">
         Google Doc
@@ -148,171 +148,43 @@
         </div>
       </section>
 
+      <section class="series-section" id="series" aria-labelledby="series-title">
+        <div class="section-heading">
+          <p class="kicker">Imported Harness Series</p>
+          <h2 id="series-title">One Surface, 3 Harness Field Notes</h2>
+        </div>
+        <div class="series-grid" id="seriesGrid" aria-label="Harness Series articles"></div>
+      </section>
+
       <div class="article-layout">
         <aside class="rail" aria-labelledby="rail-title">
-          <p class="kicker" id="rail-title">Article Harness</p>
-          <a href="#recap">Recap</a>
-          <a href="#approach">My Approach</a>
-          <a href="#why-cli">Why a CLI?</a>
-          <a href="#sandbox">CLI + Sandbox Agents</a>
-          <a href="#next">What's Next?</a>
+          <p class="kicker" id="rail-title">Reader Harness</p>
+          <div class="rail-stack" id="articleToc" aria-label="Article sections"></div>
         </aside>
 
-        <article class="article" id="article">
+        <article class="article" id="article" aria-live="polite">
           <header class="article-header">
-            <p class="article-meta">Harness Series / I.02 / Akhil Ramaswamy</p>
-            <h2>The Primitive</h2>
-            <p>
+            <div class="article-status">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span id="articleIssue">Harness Series</span>
+              <span id="articleReadTime">reading surface</span>
+            </div>
+            <p class="article-meta" id="articleMeta">Harness Series / I.03 / Akhil Ramaswamy</p>
+            <h2 id="articleTitle">The Primitive</h2>
+            <p id="articleSummary">
               Why the primitive may be a CLI-backed learning harness, not just a skill.
             </p>
           </header>
-
-          <section id="recap">
-            <h3>Recap</h3>
-            <p class="lede">
-              I spent a lot of time reflecting on my last field note. Harness Engineering is crucial when we think about this next phase in AI, where it is less about model intelligence alone and more focused on the scaffolding around the model itself.
-            </p>
-            <p>
-              The idea of the meta-harness hinges on an interface that continuously optimizes and learns. I personally believe it is a foundational concept for personalized software. There is a lot of theoretical research happening, and it is a fun but very large frontier problem to solve.
-            </p>
-            <p>
-              The smallest useful primitive, however, may be much smaller. It may not require rewriting Codex or Claude Code, or creating a complex training framework that sits over the model itself.
-            </p>
-            <p>
-              In my opinion, this primitive could start as a local skill factory: a meta-harness that observes repeated work, decomposes that work into workflow families, generates reviewable optimization artifacts, critiques them, and lets the user decide what should become part of the future work environment.
-            </p>
-            <p>
-              Frontier engineers are already doing this by asking Codex to build skills from their workflows. But the deeper primitive is broader than skills. It is a local learning loop for turning repeated work into infrastructure, and it can scale across product surfaces.
-            </p>
-            <p>
-              Instead of just talking about it, I dedicated a weekend to steering the build of the CLI myself.
-            </p>
-          </section>
-
-          <section id="approach">
-            <h3>My Approach</h3>
-            <p>
-              The goal for this first primitive was to keep it intentionally small. I wanted the primitive to ask one simple question:
-            </p>
-            <blockquote>
-              What work does this person keep doing that should become a reusable system behavior?
-            </blockquote>
-            <p>
-              I also needed a primitive that could scale into something much larger, which led me to build a CLI.
-            </p>
-            <p>
-              The current factory imports local Codex traces, finds repeated workflows, and produces candidate optimization bundles. Sometimes that bundle may become a skill. But the important point is that the output is not just <code>SKILL.md</code>.
-            </p>
-            <p>The output is a reviewable package:</p>
-            <ul>
-              <li><code>workflow.json</code>: the detected workflow family</li>
-              <li><code>evidence.json</code>: the sessions and signals behind the candidate</li>
-              <li><code>SKILL.md</code>: the proposed reusable behavior</li>
-              <li><code>CRITIQUE.md</code>: risks, strengths, and review questions</li>
-              <li><code>scorecard.json</code>: the eval criteria and promotion verdict</li>
-            </ul>
-            <p>
-              That structure matters because a personalized harness should not silently mutate itself.
-            </p>
-            <p>
-              If the system proposes a new behavior, the user should be able to ask: why does this exist, what traces support it, when should it trigger, what risks does it introduce, and what would make it worth installing?
-            </p>
-            <p>
-              That is the line I care about most. A meta-harness cannot just optimize. It has to make optimization legible, and this becomes increasingly important when we think beyond the primitive.
-            </p>
-          </section>
-
-          <section id="why-cli">
-            <h3>Why a CLI?</h3>
-            <p>
-              The obvious pushback is: why build a CLI at all? Why not just create a Codex skill or Claude skill that reads logs and generates more skills?
-            </p>
-            <p>
-              That is a fair point. If the goal is just to help your coding tool get to know you a bit better, I would argue a skill is the right choice. But if we are trying to build a primitive that scales into something more, the skill is only the invocation surface.
-            </p>
-            <p>
-              The skill can decide when the factory should run. The CLI gives the factory a durable place to operate. It can read files, redact secrets, write artifacts, compare runs, store eval outputs, generate UI scaffolds, and persist outside a single chat session.
-            </p>
-            <p>That separation gives the system a cleaner shape:</p>
-            <ol>
-              <li>The agent notices repeated work.</li>
-              <li>A skill or tool wrapper invokes the factory.</li>
-              <li>The CLI performs the factory work.</li>
-              <li>The workspace stores the evidence and artifacts.</li>
-              <li>The UI lets the user inspect, tune, reject, revise, or promote the output.</li>
-            </ol>
-            <p>
-              The CLI is not the final user experience. It is the substrate that makes the future user experience trustworthy.
-            </p>
-          </section>
-
-          <section id="sandbox">
-            <h3>CLI + Sandbox Agents</h3>
-            <p>
-              The CLI becomes more important when you think about sandboxed agent runtimes, a new primitive natively built into the Agents SDK from OpenAI.
-            </p>
-            <p>
-              As agents move into persistent workspaces where they can inspect files, run commands, edit artifacts, use tools, and resume from saved state, the CLI stops being something a person runs manually. It becomes a local control plane that an agent can call.
-            </p>
-            <p>
-              This is especially useful in the CLI architecture because it no longer behaves like a simple skill generator. Instead, it becomes a mechanical self-learning loop:
-            </p>
-            <blockquote>
-              agent observes work -> local factory builds candidate infrastructure -> eval layer critiques it -> user promotes what should persist.
-            </blockquote>
-            <p>
-              The interesting part is the freedom we have in the final artifact. The output does not have to be a skill every time, and in fact it often should not. Sometimes the right artifact is a checklist, eval, CLI command, UI component, project scaffold, browser automation, or filesystem convention.
-            </p>
-            <p>
-              As we start thinking about what the scaffolding could become, and what interfaces it can interact with, we start knocking on the door of generative software grounded by a simple goal:
-            </p>
-            <blockquote>
-              The factory's job is to learn what optimization artifact should exist and how it is served to the user.
-            </blockquote>
-          </section>
-
-          <section id="next">
-            <h3>What's Next?</h3>
-            <p>
-              If you have gotten to this point, I sincerely thank you. For those frustrated by the number of questions I have left unanswered, I empathize with you. This is not a simple problem, and there are many questions left unsolved.
-            </p>
-            <p>
-              The simplest way I have thought about validating my ongoing hypotheses is by optimizing my own workspace. For example, I keep asking Codex to turn messy research notes into structured field notes. The CLI can detect that repeated workflow and capture the workspace pattern behind it: the files I inspect, the context I preserve, the intermediate artifacts I create, and the shape of the final output.
-            </p>
-            <p>
-              It then generates a candidate bundle: the proposed skill, the evidence behind it, a critique, and a scorecard explaining when that pattern should trigger again.
-            </p>
-            <p>
-              I review the bundle, decide whether it actually matches how I work, and either reject, revise, or promote it into my future environment.
-            </p>
-            <p>
-              Over time, even that learning and promotion loop can become more automated, as the harness gets better at knowing which patterns are safe, useful, and worth carrying forward.
-            </p>
-          </section>
+          <div class="article-body" id="articleBody"></div>
         </article>
 
         <aside class="artifact-panel" id="artifacts" aria-labelledby="artifact-title">
-          <p class="kicker" id="artifact-title">Candidate Bundle</p>
-          <div class="artifact">
-            <span>workflow.json</span>
-            <p>Repeated work becomes a named workflow family.</p>
+          <p class="kicker" id="artifact-title">Context Plane</p>
+          <div class="artifact hero-artifact">
+            <span id="activeAuthor">Akhil Ramaswamy</span>
+            <p id="activeTopics">primitive / skill-factory / CLI substrate</p>
           </div>
-          <div class="artifact">
-            <span>evidence.json</span>
-            <p>Sessions and signals explain why the proposal exists.</p>
-          </div>
-          <div class="artifact">
-            <span>SKILL.md</span>
-            <p>One possible reusable behavior, not the only output.</p>
-          </div>
-          <div class="artifact">
-            <span>CRITIQUE.md</span>
-            <p>Strengths, risks, review questions, and rejection paths.</p>
-          </div>
-          <div class="artifact">
-            <span>scorecard.json</span>
-            <p>Promotion criteria before behavior becomes persistent.</p>
-          </div>
+          <div class="reference-stack" id="referenceStack" aria-label="Article references"></div>
         </aside>
       </div>
     </main>
