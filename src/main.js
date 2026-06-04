@@ -24,6 +24,11 @@ const bootConsole = document.querySelector("#bootConsole");
 const simStage = document.querySelector("#simStage");
 const simControls = document.querySelector("#simControls");
 const simStatus = document.querySelector("#simStatus");
+const rsiKicker = document.querySelector("#rsiKicker");
+const rsiTitle = document.querySelector("#rsiTitle");
+const rsiSummary = document.querySelector("#rsiSummary");
+const rsiMetrics = document.querySelector("#rsiMetrics");
+const rsiStage = document.querySelector("#rsiStage");
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
@@ -62,21 +67,21 @@ function buildSeriesGrid() {
 
 const simPresets = {
   "the-primitive": {
-    status: "local skill factory online",
+    status: "harness RSI scaffold online",
     stages: [
-      ["Observe", "Codex traces", "Repeated work enters the local factory as raw behavior."],
-      ["Decompose", "Workflow family", "The harness groups sessions by files, commands, artifacts, and outcomes."],
-      ["Synthesize", "Candidate bundle", "The system proposes a reusable artifact instead of silently mutating itself."],
-      ["Promote", "Future behavior", "You accept, revise, reject, or install what should persist."]
+      ["Trace", "Work history", "Files, commands, outcomes, and reader choices become inspectable experience."],
+      ["Diagnose", "Failure family", "The harness finds repeated breakdowns instead of optimizing from one scalar score."],
+      ["Rewrite", "Candidate code", "The meta-loop proposes a concrete bundle that changes future behavior."],
+      ["Promote", "Next harness", "Review gates decide what persists, rolls back, or re-enters search."]
     ]
   },
   "autonomous-harness-engineering": {
     status: "outer loop inspecting traces",
     stages: [
-      ["Task", "Inner harness", "The model runs with tools, memory, context, and state."],
-      ["Trace", "Failure surface", "Execution history exposes where the harness helped or failed."],
-      ["Rewrite", "Outer loop", "A meta-agent compares candidates and rewrites the scaffold."],
-      ["Eval", "New harness", "Scores decide whether the next harness deserves to run."]
+      ["Run", "H_t + model", "The current harness wraps the model with tools, memory, context, and state."],
+      ["Log", "Trace store", "Prompts, tool calls, outputs, scores, and state updates stay available as raw history."],
+      ["Search", "Meta-harness", "A proposer reads prior code and traces before editing the scaffold."],
+      ["Select", "H_t+1", "Candidate harnesses compete through evals before one becomes the next runtime."]
     ]
   },
   "harnesses-as-self-improving-infrastructure": {
@@ -87,6 +92,69 @@ const simPresets = {
       ["Rank", "Scored set", "Signals, embeddings, and counts sort for expected value."],
       ["Allocate", "Rendered world", "The harness turns model outputs into product behavior and trace memory."]
     ]
+  }
+};
+
+const rsiDiagrams = {
+  observe: {
+    kicker: "Harness RSI / phase 01",
+    title: "Runtime Trace Capture",
+    summary:
+      "The current harness runs the work and leaves behind the raw material for improvement: prompts, tool calls, model outputs, state updates, and local files.",
+    metrics: ["Full trace", "State delta", "No compression first"],
+    active: 1,
+    nodes: [
+      ["Request", "User work enters a concrete local environment."],
+      ["H_t runtime", "The harness decides context, tools, memory, and state."],
+      ["Output + trace", "Every run emits both an answer and diagnostic exhaust."],
+      ["History store", "The next loop can inspect source, scores, and traces."]
+    ],
+    loopNote: "RSI begins when the system can inspect the consequences of its own scaffold."
+  },
+  decompose: {
+    kicker: "Harness RSI / phase 02",
+    title: "Failure Attribution",
+    summary:
+      "The meta-loop does not just ask whether the last attempt scored well. It compares traces across attempts to find which harness decisions caused later failures.",
+    metrics: ["Cross-run search", "Causal hints", "Workflow families"],
+    active: 2,
+    nodes: [
+      ["Trace history", "Prior candidates remain searchable instead of being summarized away."],
+      ["Pattern finder", "Repeated failures cluster by files, commands, handoffs, and decisions."],
+      ["Harness slot", "The system identifies what to change: retrieval, memory, prompt, or tool flow."],
+      ["Risk frame", "Known regressions become constraints for the next proposal."]
+    ],
+    loopNote: "This is the credit-assignment move: blame the harness shape, not just the model answer."
+  },
+  synthesize: {
+    kicker: "Harness RSI / phase 03",
+    title: "Candidate Harness Generation",
+    summary:
+      "A proposer turns diagnosis into executable changes. The artifact is a reviewable harness bundle, not a vibe shift hidden inside the next prompt.",
+    metrics: ["Delta H", "Candidate beam", "Reviewable code"],
+    active: 0,
+    nodes: [
+      ["Meta-proposer", "Reads prior code and traces through ordinary developer operations."],
+      ["Delta H", "Edits retrieval, memory, state updates, prompts, or orchestration."],
+      ["Candidate bundle", "Ships code, evidence, assumptions, and rollback notes together."],
+      ["Interface check", "Invalid or brittle harnesses fail before promotion."]
+    ],
+    loopNote: "The search target is code-space: the scaffold around the model becomes the thing evolving."
+  },
+  critique: {
+    kicker: "Harness RSI / phase 04",
+    title: "Evaluate, Promote, Repeat",
+    summary:
+      "Candidates run against tasks, produce scores and traces, and either enter the frontier or feed the next round of diagnosis. The loop improves the harness while the base model stays fixed.",
+    metrics: ["Eval score", "Pareto frontier", "H_t -> H_t+1"],
+    active: 3,
+    nodes: [
+      ["Eval tasks", "Run candidates where behavior can be compared."],
+      ["Scores + logs", "Quality, cost, failures, and reasoning traces return to the store."],
+      ["Frontier", "Promotion weighs performance against risk and context cost."],
+      ["Next harness", "Accepted changes become the runtime for future work."]
+    ],
+    loopNote: "Harness-level RSI is a repeatable promotion loop: run, log, rewrite, evaluate, persist."
   }
 };
 
@@ -148,6 +216,36 @@ function renderSim(slug, activeIndex = 0) {
   document.querySelectorAll("[data-sim-step]").forEach((item) => {
     item.addEventListener("click", () => renderSim(slug, Number(item.dataset.simStep)));
   });
+}
+
+function renderPrimitiveDiagram(phase = "observe") {
+  const diagram = rsiDiagrams[phase] || rsiDiagrams.observe;
+
+  rsiKicker.textContent = diagram.kicker;
+  rsiTitle.textContent = diagram.title;
+  rsiSummary.textContent = diagram.summary;
+  rsiMetrics.innerHTML = diagram.metrics.map((metric) => `<span>${metric}</span>`).join("");
+  rsiStage.innerHTML = `
+    <div class="rsi-rail" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="rsi-nodes">
+      ${diagram.nodes
+        .map(
+          ([label, detail], index) => `
+            <div class="rsi-node ${index === diagram.active ? "is-active" : ""}">
+              <span>${String(index + 1).padStart(2, "0")}</span>
+              <strong>${label}</strong>
+              <small>${detail}</small>
+            </div>
+          `
+        )
+        .join("")}
+    </div>
+    <p class="rsi-loop-note">${diagram.loopNote}</p>
+  `;
 }
 
 function renderArticle(slug = "the-primitive", options = {}) {
@@ -215,6 +313,7 @@ segments.forEach((segment) => {
 phaseCards.forEach((card) => {
   card.addEventListener("click", () => {
     phaseCards.forEach((item) => item.classList.toggle("is-selected", item === card));
+    renderPrimitiveDiagram(card.dataset.phaseCard);
   });
 });
 
@@ -238,6 +337,7 @@ function observeDynamicContent() {
 }
 
 buildSeriesGrid();
+renderPrimitiveDiagram();
 renderArticle(new URLSearchParams(window.location.search).get("article") || "the-primitive");
 
 window.addEventListener("popstate", () => {

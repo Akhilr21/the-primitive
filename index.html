@@ -92,67 +92,38 @@
           <h2 id="map-title">The Skill Factory Is a Loop, Not a Prompt</h2>
         </div>
         <div class="map-grid">
-          <article class="map-card is-selected" data-phase-card="observe">
+          <button class="map-card is-selected" type="button" data-phase-card="observe">
             <span class="num">01</span>
-            <h3>Observe Work</h3>
+            <span class="map-card-title">Observe Work</span>
             <p>Import local traces and ask what work keeps recurring.</p>
-          </article>
-          <article class="map-card" data-phase-card="decompose">
+          </button>
+          <button class="map-card" type="button" data-phase-card="decompose">
             <span class="num">02</span>
-            <h3>Find Families</h3>
+            <span class="map-card-title">Find Families</span>
             <p>Group sessions by signals, files, handoffs, and repeated outcomes.</p>
-          </article>
-          <article class="map-card" data-phase-card="synthesize">
+          </button>
+          <button class="map-card" type="button" data-phase-card="synthesize">
             <span class="num">03</span>
-            <h3>Generate Bundles</h3>
+            <span class="map-card-title">Generate Bundles</span>
             <p>Emit a reviewable package, not just a hidden behavior change.</p>
-          </article>
-          <article class="map-card" data-phase-card="critique">
+          </button>
+          <button class="map-card" type="button" data-phase-card="critique">
             <span class="num">04</span>
-            <h3>Critique Risk</h3>
+            <span class="map-card-title">Critique Risk</span>
             <p>Make strengths, risks, trigger rules, and promotion gates legible.</p>
-          </article>
+          </button>
         </div>
-        <div class="loop-visual" aria-label="Local learning loop diagram">
-          <svg viewBox="0 0 960 420" role="img" aria-labelledby="loop-title loop-desc">
-            <title id="loop-title">Local learning loop</title>
-            <desc id="loop-desc">Traces become workflow families, candidate bundles, critique, and promoted behavior.</desc>
-            <defs>
-              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-                <path d="M1 1 L8 5 L1 9" fill="none" stroke="currentColor" stroke-width="1.4" />
-              </marker>
-            </defs>
-            <g class="lane lane-a">
-              <rect x="42" y="78" width="210" height="112" rx="8" />
-              <text x="62" y="112">codex traces</text>
-              <text x="62" y="145" class="sub">files, commands, outcomes</text>
-            </g>
-            <g class="lane lane-b">
-              <rect x="318" y="78" width="210" height="112" rx="8" />
-              <text x="338" y="112">workflow.json</text>
-              <text x="338" y="145" class="sub">detected family</text>
-            </g>
-            <g class="lane lane-c">
-              <rect x="594" y="78" width="252" height="112" rx="8" />
-              <text x="614" y="112">candidate bundle</text>
-              <text x="614" y="145" class="sub">skill, evidence, critique</text>
-            </g>
-            <g class="lane lane-d">
-              <rect x="178" y="260" width="244" height="104" rx="8" />
-              <text x="198" y="294">evaluation layer</text>
-              <text x="198" y="326" class="sub">scorecard and review gates</text>
-            </g>
-            <g class="lane lane-e">
-              <rect x="520" y="260" width="260" height="104" rx="8" />
-              <text x="540" y="294">future environment</text>
-              <text x="540" y="326" class="sub">promoted behavior, or reject</text>
-            </g>
-            <path class="flow" d="M252 134 H318" marker-end="url(#arrow)" />
-            <path class="flow" d="M528 134 H594" marker-end="url(#arrow)" />
-            <path class="flow soft" d="M720 190 C705 246 620 254 520 290" marker-end="url(#arrow)" />
-            <path class="flow" d="M422 312 H520" marker-end="url(#arrow)" />
-            <path class="flow return" d="M650 260 C568 224 190 238 142 190" marker-end="url(#arrow)" />
-          </svg>
+        <div class="rsi-visual" id="rsiVisual" aria-live="polite">
+          <div class="rsi-copy">
+            <p class="kicker" id="rsiKicker">Harness RSI / phase 01</p>
+            <h3 id="rsiTitle">Runtime Trace Capture</h3>
+            <p id="rsiSummary">
+              The harness does the task and leaves behind the raw material for improvement: prompts, tool calls, model
+              outputs, state updates, and local files.
+            </p>
+            <div class="rsi-metrics" id="rsiMetrics" aria-label="Selected phase signals"></div>
+          </div>
+          <div class="rsi-stage" id="rsiStage" aria-label="Interactive recursive self-improvement diagram"></div>
         </div>
       </section>
 
