@@ -26,6 +26,7 @@
       </a>
       <nav class="topnav" aria-label="Page">
         <a href="#primitive-map">Primitive Map</a>
+        <a href="#knowledge-map">Source Tree</a>
         <a href="#series">Series</a>
         <a href="#article">Reader</a>
       </nav>
@@ -131,6 +132,66 @@
             <div class="rsi-metrics" id="rsiMetrics" aria-label="Selected phase signals"></div>
           </div>
           <div class="rsi-stage" id="rsiStage" aria-label="Interactive recursive self-improvement diagram"></div>
+        </div>
+      </section>
+
+      <section class="knowledge-section" id="knowledge-map" aria-labelledby="knowledge-title">
+        <div class="section-heading">
+          <p class="kicker" id="knowledgeKicker">Primitive Source Tree</p>
+          <h2 id="knowledge-title">Where the Primitive Comes From</h2>
+          <p id="knowledgeIntro">
+            A folder-style map of the two foundation papers, the harness layer they imply, and the article that sits on top.
+          </p>
+        </div>
+        <div class="knowledge-layout">
+          <div class="folder-tree" role="tree" aria-label="Primitive source folder map">
+            <button class="tree-item is-active" type="button" data-knowledge-node="primitive" role="treeitem">
+              <span class="tree-icon" aria-hidden="true">/</span>
+              <span>the-primitive</span>
+              <small>synthesis article</small>
+            </button>
+            <div class="tree-branch" role="group">
+              <button class="tree-item" type="button" data-knowledge-node="papers" role="treeitem">
+                <span class="tree-icon" aria-hidden="true">dir</span>
+                <span>papers</span>
+                <small>source arguments</small>
+              </button>
+              <button class="tree-item tree-indent" type="button" data-knowledge-node="paper-one" role="treeitem">
+                <span class="tree-icon" aria-hidden="true">01</span>
+                <span>autonomous-harness-engineering.md</span>
+                <small>inner + outer loop</small>
+              </button>
+              <button class="tree-item tree-indent" type="button" data-knowledge-node="paper-two" role="treeitem">
+                <span class="tree-icon" aria-hidden="true">02</span>
+                <span>meta-harness-2603.28052v1.md</span>
+                <small>recursive improvement</small>
+              </button>
+            </div>
+            <div class="tree-branch" role="group">
+              <button class="tree-item" type="button" data-knowledge-node="harness" role="treeitem">
+                <span class="tree-icon" aria-hidden="true">dir</span>
+                <span>harness-runtime</span>
+                <small>tools, traces, evals</small>
+              </button>
+              <button class="tree-item tree-indent" type="button" data-knowledge-node="site" role="treeitem">
+                <span class="tree-icon" aria-hidden="true">app</span>
+                <span>agi-loading.surface</span>
+                <small>reader + diagrams</small>
+              </button>
+            </div>
+          </div>
+
+          <aside class="knowledge-card" aria-live="polite" aria-label="Selected source explanation">
+            <div class="knowledge-card-head">
+              <span id="knowledgeType">article</span>
+              <strong id="knowledgeTitle">the-primitive</strong>
+            </div>
+            <p id="knowledgeSummary">
+              The Primitive is the synthesis layer: it asks what reusable unit should persist when AI work starts to improve the tools around itself.
+            </p>
+            <div class="knowledge-tags" id="knowledgeTags" aria-label="Selected source tags"></div>
+            <div class="knowledge-flow" id="knowledgeFlow" aria-label="Contribution path"></div>
+          </aside>
         </div>
       </section>
 

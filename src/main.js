@@ -14,6 +14,7 @@ const summaries = {
 };
 
 const phaseCards = document.querySelectorAll("[data-phase-card]");
+const treeItems = document.querySelectorAll("[data-knowledge-node]");
 const segments = document.querySelectorAll("[data-prior]");
 const siteModeButtons = document.querySelectorAll("[data-site-mode]");
 const priorSummary = document.querySelector("#priorSummary");
@@ -46,10 +47,19 @@ const seriesTitle = document.querySelector("#series-title");
 const railTitle = document.querySelector("#rail-title");
 const footerLead = document.querySelector("#footerLead");
 const footerTail = document.querySelector("#footerTail");
+const knowledgeKicker = document.querySelector("#knowledgeKicker");
+const knowledgeTitle = document.querySelector("#knowledge-title");
+const knowledgeIntro = document.querySelector("#knowledgeIntro");
+const knowledgeType = document.querySelector("#knowledgeType");
+const knowledgeCardTitle = document.querySelector("#knowledgeTitle");
+const knowledgeSummary = document.querySelector("#knowledgeSummary");
+const knowledgeTags = document.querySelector("#knowledgeTags");
+const knowledgeFlow = document.querySelector("#knowledgeFlow");
 
 let currentPrior = "builder";
 let currentSiteMode = "technical";
 let currentPrimitivePhase = "observe";
+let currentKnowledgeNode = "primitive";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
@@ -72,6 +82,10 @@ const siteCopy = {
     mapTitle: "The Skill Factory Is a Loop, Not a Prompt",
     seriesKicker: "Imported Harness Series",
     seriesTitle: "One Surface, 3 Harness Field Notes",
+    knowledgeKicker: "Primitive Source Tree",
+    knowledgeTitle: "Where the Primitive Comes From",
+    knowledgeIntro:
+      "A folder-style map of the two foundation papers, the harness layer they imply, and the article that sits on top.",
     railTitle: "Reader Harness",
     footerLead: "AGI Loading wraps",
     footerTail: "as a playable article surface.",
@@ -89,6 +103,10 @@ const siteCopy = {
     mapTitle: "The Main Idea: Better Tools Create Better AI Work",
     seriesKicker: "Reading Path",
     seriesTitle: "3 Notes About Building Smarter AI Workflows",
+    knowledgeKicker: "Source Map",
+    knowledgeTitle: "The Article Is Built on 2 Earlier Ideas",
+    knowledgeIntro:
+      "Think of this like a project folder: the article is the visible page, but underneath it are the papers and tool ideas that make it work.",
     railTitle: "Reader Guide",
     footerLead: "AGI Loading turns",
     footerTail: "into an interactive reading room.",
@@ -97,6 +115,109 @@ const siteCopy = {
       decompose: ["Find the Pattern", "Group similar work so the system can see what usually goes right or wrong."],
       synthesize: ["Build a Better Tool", "Turn that pattern into something reusable that people can inspect."],
       critique: ["Keep or Reject", "Decide what is safe to keep, what needs edits, and what should be thrown away."]
+    }
+  }
+};
+
+const knowledgeMaps = {
+  technical: {
+    primitive: {
+      type: "article",
+      title: "the-primitive",
+      summary:
+        "The Primitive is the synthesis layer: it asks what reusable unit should persist when AI work starts to improve the tools around itself.",
+      tags: ["CLI-backed primitive", "persistent behavior", "human review"],
+      flow: ["Paper 01 frames harnesses", "Paper 02 formalizes recursive search", "Primitive asks what should persist"]
+    },
+    papers: {
+      type: "folder",
+      title: "papers",
+      summary:
+        "The foundation folder. These papers supply the claims that a harness is more than a prompt and that recursive improvement can target the scaffold around the model.",
+      tags: ["source arguments", "research priors", "harness theory"],
+      flow: ["Define harness", "Define meta-loop", "Route both into the primitive"]
+    },
+    "paper-one": {
+      type: "paper 01",
+      title: "Autonomous Harness Engineering",
+      summary:
+        "This paper establishes the inner/outer loop: a task harness runs the model, while a meta-layer inspects traces and rewrites the harness itself.",
+      tags: ["inner loop", "outer loop", "trace inspection"],
+      flow: ["Run task", "Capture trace", "Rewrite scaffold", "Evaluate next harness"]
+    },
+    "paper-two": {
+      type: "paper 02",
+      title: "Meta-Harness / arXiv 2603.28052v1",
+      summary:
+        "This paper makes the RSI move explicit: search over harness code and histories, evaluate candidates, and promote the next harness without changing the base model weights.",
+      tags: ["recursive self-improvement", "candidate harnesses", "Pareto frontier"],
+      flow: ["Read prior code + logs", "Propose delta H", "Score candidates", "Promote H_t+1"]
+    },
+    harness: {
+      type: "runtime folder",
+      title: "harness-runtime",
+      summary:
+        "The implementation layer implied by both papers: tools, memory, context, traces, state, evaluation gates, and rollback become first-class surfaces.",
+      tags: ["tools", "memory", "eval gates"],
+      flow: ["Tools + memory", "Trace store", "Quality signal", "Promotion gate"]
+    },
+    site: {
+      type: "surface",
+      title: "agi-loading.surface",
+      summary:
+        "The site turns the abstract dependency graph into a reader surface: imported field notes, interactive diagrams, and mode-aware explanations.",
+      tags: ["reader", "diagram layer", "site copy modes"],
+      flow: ["Import articles", "Map dependencies", "Expose diagrams", "Let readers switch modes"]
+    }
+  },
+  plain: {
+    primitive: {
+      type: "article",
+      title: "the-primitive",
+      summary:
+        "This article asks a simple question: when an AI workflow gets better, what part should be saved so future work improves too?",
+      tags: ["main idea", "what should persist", "review before keeping"],
+      flow: ["Idea 1: tools around AI matter", "Idea 2: tools can improve themselves", "Article: what do we save?"]
+    },
+    papers: {
+      type: "folder",
+      title: "papers",
+      summary:
+        "This folder holds the two ideas underneath the article: first, AI needs a working setup around it; second, that setup can be tested and improved.",
+      tags: ["background", "2 source ideas", "foundation"],
+      flow: ["Understand the setup", "Understand improvement", "Build the article"]
+    },
+    "paper-one": {
+      type: "paper 01",
+      title: "Autonomous Harness Engineering",
+      summary:
+        "The first idea: AI does better when it has a surrounding workbench of tools, memory, context, and feedback.",
+      tags: ["AI workbench", "tools + memory", "learning from attempts"],
+      flow: ["Do work", "Save what happened", "Notice failures", "Improve the workbench"]
+    },
+    "paper-two": {
+      type: "paper 02",
+      title: "Meta-Harness / arXiv 2603.28052v1",
+      summary:
+        "The second idea: instead of only asking the model to be smarter, improve the workflow around the model and test better versions.",
+      tags: ["self-improvement", "better versions", "keep the winners"],
+      flow: ["Look at past attempts", "Make a better setup", "Test options", "Keep the best one"]
+    },
+    harness: {
+      type: "tool folder",
+      title: "harness-runtime",
+      summary:
+        "This is the workbench: the tools, memory, saved history, tests, and review gates that make improvement possible.",
+      tags: ["tools", "saved history", "tests"],
+      flow: ["Choose tools", "Remember the run", "Check quality", "Approve or reject"]
+    },
+    site: {
+      type: "surface",
+      title: "agi-loading.surface",
+      summary:
+        "This website makes the map visible, so a reader can see how the article grows out of the earlier papers.",
+      tags: ["reader", "interactive map", "plain/technical modes"],
+      flow: ["Show the articles", "Show the source tree", "Explain the loop", "Let readers choose language"]
     }
   }
 };
@@ -371,6 +492,32 @@ function renderPrimitiveDiagram(phase = "observe") {
   `;
 }
 
+function renderKnowledgeMap(node = "primitive") {
+  currentKnowledgeNode = node;
+  const item = knowledgeMaps[currentSiteMode][node] || knowledgeMaps[currentSiteMode].primitive;
+
+  treeItems.forEach((treeItem) => {
+    const isSelected = treeItem.dataset.knowledgeNode === node;
+    treeItem.classList.toggle("is-active", isSelected);
+    treeItem.setAttribute("aria-selected", String(isSelected));
+  });
+
+  knowledgeType.textContent = item.type;
+  knowledgeCardTitle.textContent = item.title;
+  knowledgeSummary.textContent = item.summary;
+  knowledgeTags.innerHTML = item.tags.map((tag) => `<span>${tag}</span>`).join("");
+  knowledgeFlow.innerHTML = item.flow
+    .map(
+      (step, index) => `
+        <div class="knowledge-flow-step">
+          <span>${String(index + 1).padStart(2, "0")}</span>
+          <strong>${step}</strong>
+        </div>
+      `
+    )
+    .join("");
+}
+
 function updatePriorSummary() {
   priorSummary.textContent = summaries[currentSiteMode][currentPrior] || summaries.technical.builder;
 }
@@ -384,6 +531,9 @@ function renderSiteCopy() {
   mapTitle.textContent = copy.mapTitle;
   seriesKicker.textContent = copy.seriesKicker;
   seriesTitle.textContent = copy.seriesTitle;
+  knowledgeKicker.textContent = copy.knowledgeKicker;
+  knowledgeTitle.textContent = copy.knowledgeTitle;
+  knowledgeIntro.textContent = copy.knowledgeIntro;
   railTitle.textContent = copy.railTitle;
   footerLead.textContent = copy.footerLead;
   footerTail.textContent = copy.footerTail;
@@ -401,6 +551,7 @@ function renderSiteCopy() {
 
   updatePriorSummary();
   renderPrimitiveDiagram(currentPrimitivePhase);
+  renderKnowledgeMap(currentKnowledgeNode);
 }
 
 function setSiteMode(mode, options = {}) {
@@ -490,6 +641,12 @@ phaseCards.forEach((card) => {
   });
 });
 
+treeItems.forEach((item) => {
+  item.addEventListener("click", () => {
+    renderKnowledgeMap(item.dataset.knowledgeNode);
+  });
+});
+
 bootButton.addEventListener("click", runBootSequence);
 
 const observer = new IntersectionObserver(
@@ -504,9 +661,11 @@ const observer = new IntersectionObserver(
 );
 
 function observeDynamicContent() {
-  document.querySelectorAll(".map-card, .series-card, .article-body section, .article-body > figure, .article-sim").forEach((item) => {
-    observer.observe(item);
-  });
+  document
+    .querySelectorAll(".map-card, .tree-item, .knowledge-card, .series-card, .article-body section, .article-body > figure, .article-sim")
+    .forEach((item) => {
+      observer.observe(item);
+    });
 }
 
 buildSeriesGrid();
