@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#09090a" />
     <meta
       name="description"
-      content="The Primitive: why the smallest useful meta-harness may be a CLI-backed local learning loop, not just a skill."
+      content="AGI Loading: interactive field notes on harnesses, meta-harnesses, and the software around model intelligence."
     />
-    <title>The Primitive | Harness Series</title>
+    <title>AGI Loading</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,7 +22,7 @@
     <header class="topbar" aria-label="Site">
       <a class="brand" href="https://harnessseries-site.vercel.app/posts/autonomous-harness-engineering">
         <span class="brand-dot" aria-hidden="true"></span>
-        <span>Harness Series</span>
+        <span>AGI Loading</span>
       </a>
       <nav class="topnav" aria-label="Page">
         <a href="#primitive-map">Primitive Map</a>
@@ -37,30 +37,38 @@
     <main>
       <section class="hero" aria-labelledby="title">
         <div class="hero-copy">
-          <p class="kicker">I.02 / Follow-On Field Note</p>
-          <h1 id="title">The Primitive</h1>
+          <p class="kicker">AGI loading / harness boot sequence</p>
+          <h1 id="title">AGI Loading</h1>
           <p class="dek">
-            Why the smallest useful meta-harness may be a CLI-backed learning loop, not just a skill.
+            Field notes from the software layer around model intelligence, rendered as an interactive bootloader.
           </p>
           <div class="hero-actions" aria-label="Primary links">
-            <a class="button primary" href="#article">Read Article</a>
-            <a class="button ghost" href="#primitive-map">Inspect the Loop</a>
+            <button class="button primary" type="button" id="bootButton">Start Boot</button>
+            <a class="button ghost" href="#article">Enter Reader</a>
           </div>
         </div>
 
-        <aside class="run-card" aria-label="Live primitive sequence">
+        <aside class="run-card boot-card" aria-label="AGI loading game">
           <div class="run-head">
             <span class="live-dot" aria-hidden="true"></span>
-            <span>local factory run</span>
-            <span class="run-time">weekend build</span>
+            <span>alignment bootloader</span>
+            <span class="run-time" id="bootPercent">37%</span>
+          </div>
+          <div class="boot-meter" aria-hidden="true">
+            <span id="bootFill"></span>
           </div>
           <ol class="phase-list" aria-label="Factory phases">
-            <li class="complete"><span>Observe</span><code>codex traces</code></li>
-            <li class="complete"><span>Decompose</span><code>workflow families</code></li>
-            <li class="active"><span>Synthesize</span><code>candidate bundles</code></li>
-            <li><span>Critique</span><code>scorecards</code></li>
-            <li><span>Promote</span><code>future behavior</code></li>
+            <li class="complete"><span>Load Priors</span><code>field notes</code></li>
+            <li class="complete"><span>Compile Harness</span><code>tools + memory</code></li>
+            <li class="active"><span>Wake Meta-Loop</span><code>self-improvement</code></li>
+            <li><span>Run Evals</span><code>promotion gates</code></li>
+            <li><span>Unlock AGI Mode</span><code>pending</code></li>
           </ol>
+          <div class="boot-console" aria-live="polite" id="bootConsole">
+            <span>&gt; loading harness priors...</span>
+            <span>&gt; searching over scaffolds...</span>
+            <span>&gt; awaiting promotion signal...</span>
+          </div>
         </aside>
       </section>
 
@@ -166,35 +174,34 @@
           <header class="article-header">
             <div class="article-status">
               <span class="live-dot" aria-hidden="true"></span>
-              <span id="articleIssue">Harness Series</span>
+              <span id="articleIssue">AGI Loading</span>
               <span id="articleReadTime">reading surface</span>
             </div>
-            <p class="article-meta" id="articleMeta">Harness Series / I.03 / Akhil Ramaswamy</p>
+            <p class="article-meta" id="articleMeta">AGI Loading / I.03 / Akhil Ramaswamy</p>
             <h2 id="articleTitle">The Primitive</h2>
             <p id="articleSummary">
               Why the primitive may be a CLI-backed learning harness, not just a skill.
             </p>
+            <section class="article-sim" aria-labelledby="simTitle">
+              <div class="sim-head">
+                <span class="kicker" id="simTitle">Interactive Diagram</span>
+                <span id="simStatus">trace capture online</span>
+              </div>
+              <div class="sim-stage" id="simStage" aria-label="Interactive article diagram"></div>
+              <div class="sim-controls" id="simControls" role="group" aria-label="Diagram stages"></div>
+            </section>
           </header>
           <div class="article-body" id="articleBody"></div>
         </article>
-
-        <aside class="artifact-panel" id="artifacts" aria-labelledby="artifact-title">
-          <p class="kicker" id="artifact-title">Context Plane</p>
-          <div class="artifact hero-artifact">
-            <span id="activeAuthor">Akhil Ramaswamy</span>
-            <p id="activeTopics">primitive / skill-factory / CLI substrate</p>
-          </div>
-          <div class="reference-stack" id="referenceStack" aria-label="Article references"></div>
-        </aside>
       </div>
     </main>
 
     <footer class="footer">
-      <span>Follow-on to</span>
+      <span>AGI Loading wraps</span>
       <a href="https://harnessseries-site.vercel.app/posts/autonomous-harness-engineering">
-        Autonomous Harness Engineering?
+        Harness Series
       </a>
-      <span>Built as an inspectable article surface.</span>
+      <span>as a playable article surface.</span>
     </footer>
 
     <script type="module" src="/src/main.js"></script>

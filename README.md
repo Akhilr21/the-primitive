@@ -1,11 +1,11 @@
-# The Primitive
+# AGI Loading
 
-A Vercel-ready static article site for Akhil Ramaswamy's follow-on to
-`Autonomous Harness Engineering?`.
+A Vercel-ready interactive article site for field notes on harnesses,
+meta-harnesses, and the software layer around model intelligence.
 
-The page blends the Harness Series editorial treatment with the darker
-doclayer-style mock surface: phase rails, imported series cards, a local
-factory map, and an inspectable article/harness reader.
+The page blends the Harness Series articles with a darker, game-like AGI
+bootloader surface: loading animations, imported series cards, a local factory
+map, and interactive article diagrams.
 
 It imports the existing Harness Series article HTML from
 `vishaltandale00/harnessseries-site` into `content/posts/`, then renders those
