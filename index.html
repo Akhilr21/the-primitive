@@ -37,9 +37,9 @@
     <main>
       <section class="hero" aria-labelledby="title">
         <div class="hero-copy">
-          <p class="kicker">AGI loading / harness boot sequence</p>
+          <p class="kicker" id="heroKicker">AGI loading / harness boot sequence</p>
           <h1 id="title">AGI Loading</h1>
-          <p class="dek">
+          <p class="dek" id="heroDek">
             Field notes from the software layer around model intelligence, rendered as an interactive bootloader.
           </p>
           <div class="hero-actions" aria-label="Primary links">
@@ -84,11 +84,18 @@
         <p class="prior-summary" id="priorSummary" aria-live="polite">
           Builder view: focus on what the CLI gives the agent that a skill alone cannot hold.
         </p>
+        <div class="site-mode-control">
+          <span class="strip-label">site copy</span>
+          <div class="segmented" role="group" aria-label="Choose site language">
+            <button class="segment is-active" type="button" data-site-mode="technical">Technical</button>
+            <button class="segment" type="button" data-site-mode="plain">Plain English</button>
+          </div>
+        </div>
       </section>
 
       <section class="map-section" id="primitive-map" aria-labelledby="map-title">
         <div class="section-heading">
-          <p class="kicker">Inspectable Substrate</p>
+          <p class="kicker" id="mapKicker">Inspectable Substrate</p>
           <h2 id="map-title">The Skill Factory Is a Loop, Not a Prompt</h2>
         </div>
         <div class="map-grid">
@@ -129,7 +136,7 @@
 
       <section class="series-section" id="series" aria-labelledby="series-title">
         <div class="section-heading">
-          <p class="kicker">Imported Harness Series</p>
+          <p class="kicker" id="seriesKicker">Imported Harness Series</p>
           <h2 id="series-title">One Surface, 3 Harness Field Notes</h2>
         </div>
         <div class="series-grid" id="seriesGrid" aria-label="Harness Series articles"></div>
@@ -168,11 +175,11 @@
     </main>
 
     <footer class="footer">
-      <span>AGI Loading wraps</span>
+      <span id="footerLead">AGI Loading wraps</span>
       <a href="https://harnessseries-site.vercel.app/posts/autonomous-harness-engineering">
         Harness Series
       </a>
-      <span>as a playable article surface.</span>
+      <span id="footerTail">as a playable article surface.</span>
     </footer>
 
     <script type="module" src="/src/main.js"></script>

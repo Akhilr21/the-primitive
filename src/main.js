@@ -1,13 +1,21 @@
 import { articles } from "./articles.js";
 
 const summaries = {
-  builder: "Builder view: focus on what the CLI gives the agent that a skill alone cannot hold.",
-  researcher: "Researcher view: focus on the local learning loop as a small eval substrate for personalization.",
-  operator: "Operator view: focus on reviewable artifacts, promotion gates, and rollback before persistent behavior."
+  technical: {
+    builder: "Builder view: focus on what the CLI gives the agent that a skill alone cannot hold.",
+    researcher: "Researcher view: focus on the local learning loop as a small eval substrate for personalization.",
+    operator: "Operator view: focus on reviewable artifacts, promotion gates, and rollback before persistent behavior."
+  },
+  plain: {
+    builder: "Builder view: focus on how the site learns from repeated work and turns it into better tools.",
+    researcher: "Researcher view: focus on the feedback loop: try something, study what happened, improve the setup.",
+    operator: "Operator view: focus on what is safe to keep, what needs review, and what should be rolled back."
+  }
 };
 
 const phaseCards = document.querySelectorAll("[data-phase-card]");
 const segments = document.querySelectorAll("[data-prior]");
+const siteModeButtons = document.querySelectorAll("[data-site-mode]");
 const priorSummary = document.querySelector("#priorSummary");
 const seriesGrid = document.querySelector("#seriesGrid");
 const articleBody = document.querySelector("#articleBody");
@@ -29,6 +37,19 @@ const rsiTitle = document.querySelector("#rsiTitle");
 const rsiSummary = document.querySelector("#rsiSummary");
 const rsiMetrics = document.querySelector("#rsiMetrics");
 const rsiStage = document.querySelector("#rsiStage");
+const heroKicker = document.querySelector("#heroKicker");
+const heroDek = document.querySelector("#heroDek");
+const mapKicker = document.querySelector("#mapKicker");
+const mapTitle = document.querySelector("#map-title");
+const seriesKicker = document.querySelector("#seriesKicker");
+const seriesTitle = document.querySelector("#series-title");
+const railTitle = document.querySelector("#rail-title");
+const footerLead = document.querySelector("#footerLead");
+const footerTail = document.querySelector("#footerTail");
+
+let currentPrior = "builder";
+let currentSiteMode = "technical";
+let currentPrimitivePhase = "observe";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
@@ -42,6 +63,43 @@ const slugify = (value) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
+const siteCopy = {
+  technical: {
+    heroKicker: "AGI loading / harness boot sequence",
+    heroDek: "Field notes from the software layer around model intelligence, rendered as an interactive bootloader.",
+    mapKicker: "Inspectable Substrate",
+    mapTitle: "The Skill Factory Is a Loop, Not a Prompt",
+    seriesKicker: "Imported Harness Series",
+    seriesTitle: "One Surface, 3 Harness Field Notes",
+    railTitle: "Reader Harness",
+    footerLead: "AGI Loading wraps",
+    footerTail: "as a playable article surface.",
+    phases: {
+      observe: ["Observe Work", "Import local traces and ask what work keeps recurring."],
+      decompose: ["Find Families", "Group sessions by signals, files, handoffs, and repeated outcomes."],
+      synthesize: ["Generate Bundles", "Emit a reviewable package, not just a hidden behavior change."],
+      critique: ["Critique Risk", "Make strengths, risks, trigger rules, and promotion gates legible."]
+    }
+  },
+  plain: {
+    heroKicker: "AGI loading / plain English mode",
+    heroDek: "A guided reading room for understanding how AI systems can get better by improving the tools around them.",
+    mapKicker: "Start Here",
+    mapTitle: "The Main Idea: Better Tools Create Better AI Work",
+    seriesKicker: "Reading Path",
+    seriesTitle: "3 Notes About Building Smarter AI Workflows",
+    railTitle: "Reader Guide",
+    footerLead: "AGI Loading turns",
+    footerTail: "into an interactive reading room.",
+    phases: {
+      observe: ["Watch the Work", "Notice what people and AI agents keep doing again and again."],
+      decompose: ["Find the Pattern", "Group similar work so the system can see what usually goes right or wrong."],
+      synthesize: ["Build a Better Tool", "Turn that pattern into something reusable that people can inspect."],
+      critique: ["Keep or Reject", "Decide what is safe to keep, what needs edits, and what should be thrown away."]
+    }
+  }
+};
 
 function buildSeriesGrid() {
   seriesGrid.innerHTML = articles
@@ -96,7 +154,8 @@ const simPresets = {
 };
 
 const rsiDiagrams = {
-  observe: {
+  technical: {
+    observe: {
     kicker: "Harness RSI / phase 01",
     title: "Runtime Trace Capture",
     summary:
@@ -110,8 +169,8 @@ const rsiDiagrams = {
       ["History store", "The next loop can inspect source, scores, and traces."]
     ],
     loopNote: "RSI begins when the system can inspect the consequences of its own scaffold."
-  },
-  decompose: {
+    },
+    decompose: {
     kicker: "Harness RSI / phase 02",
     title: "Failure Attribution",
     summary:
@@ -125,8 +184,8 @@ const rsiDiagrams = {
       ["Risk frame", "Known regressions become constraints for the next proposal."]
     ],
     loopNote: "This is the credit-assignment move: blame the harness shape, not just the model answer."
-  },
-  synthesize: {
+    },
+    synthesize: {
     kicker: "Harness RSI / phase 03",
     title: "Candidate Harness Generation",
     summary:
@@ -140,8 +199,8 @@ const rsiDiagrams = {
       ["Interface check", "Invalid or brittle harnesses fail before promotion."]
     ],
     loopNote: "The search target is code-space: the scaffold around the model becomes the thing evolving."
-  },
-  critique: {
+    },
+    critique: {
     kicker: "Harness RSI / phase 04",
     title: "Evaluate, Promote, Repeat",
     summary:
@@ -155,6 +214,69 @@ const rsiDiagrams = {
       ["Next harness", "Accepted changes become the runtime for future work."]
     ],
     loopNote: "Harness-level RSI is a repeatable promotion loop: run, log, rewrite, evaluate, persist."
+    }
+  },
+  plain: {
+    observe: {
+      kicker: "Tool improvement / step 01",
+      title: "Save What Happened",
+      summary:
+        "The system does the work, then keeps a useful record of what happened: the request, the tools used, the result, and where it struggled.",
+      metrics: ["What happened", "What changed", "Keep the details"],
+      active: 1,
+      nodes: [
+        ["Request", "Someone asks the AI system to do real work."],
+        ["Current setup", "The system chooses tools, context, memory, and steps."],
+        ["Result + record", "It produces an answer and a trail of how it got there."],
+        ["History", "The next round can learn from this record."]
+      ],
+      loopNote: "Self-improvement starts when the system can look back at how its own setup behaved."
+    },
+    decompose: {
+      kicker: "Tool improvement / step 02",
+      title: "Spot the Repeating Problem",
+      summary:
+        "Instead of only asking whether the final answer was good, the site shows how to compare many attempts and find the recurring weak spot.",
+      metrics: ["Compare attempts", "Find causes", "Name the pattern"],
+      active: 2,
+      nodes: [
+        ["Past attempts", "Keep earlier examples available for comparison."],
+        ["Pattern finder", "Look for the same mistakes across different runs."],
+        ["Weak spot", "Name the part of the workflow that needs to change."],
+        ["Guardrails", "Remember what must not break next time."]
+      ],
+      loopNote: "The key move is to improve the surrounding workflow, not just ask the model to try harder."
+    },
+    synthesize: {
+      kicker: "Tool improvement / step 03",
+      title: "Make a Better Version",
+      summary:
+        "The system proposes a concrete change people can review: a better prompt, memory rule, tool flow, checklist, or interface.",
+      metrics: ["New version", "Options", "Reviewable"],
+      active: 0,
+      nodes: [
+        ["Idea maker", "Use the pattern to propose a better workflow."],
+        ["Change", "Edit the prompt, tool order, memory, or rules."],
+        ["Candidate", "Package the proposed change with evidence."],
+        ["Check", "Reject changes that are confusing or unsafe."]
+      ],
+      loopNote: "This is the practical version of recursive improvement: make the workflow itself easier to improve."
+    },
+    critique: {
+      kicker: "Tool improvement / step 04",
+      title: "Test It, Then Keep the Best",
+      summary:
+        "New versions run against examples. Good ones can become the default; weak ones feed the next round of learning.",
+      metrics: ["Test result", "Best options", "Next setup"],
+      active: 3,
+      nodes: [
+        ["Tests", "Try the new version on real tasks."],
+        ["Results", "Record quality, cost, mistakes, and surprises."],
+        ["Best set", "Keep the versions that improve outcomes without adding too much risk."],
+        ["Next setup", "Use the winning version for future work."]
+      ],
+      loopNote: "The loop is simple: do the work, study the record, make a better setup, test it, repeat."
+    }
   }
 };
 
@@ -219,7 +341,8 @@ function renderSim(slug, activeIndex = 0) {
 }
 
 function renderPrimitiveDiagram(phase = "observe") {
-  const diagram = rsiDiagrams[phase] || rsiDiagrams.observe;
+  currentPrimitivePhase = phase;
+  const diagram = rsiDiagrams[currentSiteMode][phase] || rsiDiagrams[currentSiteMode].observe;
 
   rsiKicker.textContent = diagram.kicker;
   rsiTitle.textContent = diagram.title;
@@ -246,6 +369,50 @@ function renderPrimitiveDiagram(phase = "observe") {
     </div>
     <p class="rsi-loop-note">${diagram.loopNote}</p>
   `;
+}
+
+function updatePriorSummary() {
+  priorSummary.textContent = summaries[currentSiteMode][currentPrior] || summaries.technical.builder;
+}
+
+function renderSiteCopy() {
+  const copy = siteCopy[currentSiteMode] || siteCopy.technical;
+
+  heroKicker.textContent = copy.heroKicker;
+  heroDek.textContent = copy.heroDek;
+  mapKicker.textContent = copy.mapKicker;
+  mapTitle.textContent = copy.mapTitle;
+  seriesKicker.textContent = copy.seriesKicker;
+  seriesTitle.textContent = copy.seriesTitle;
+  railTitle.textContent = copy.railTitle;
+  footerLead.textContent = copy.footerLead;
+  footerTail.textContent = copy.footerTail;
+
+  phaseCards.forEach((card) => {
+    const phase = card.dataset.phaseCard;
+    const phaseCopy = copy.phases[phase];
+    card.querySelector(".map-card-title").textContent = phaseCopy[0];
+    card.querySelector("p").textContent = phaseCopy[1];
+  });
+
+  siteModeButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.siteMode === currentSiteMode);
+  });
+
+  updatePriorSummary();
+  renderPrimitiveDiagram(currentPrimitivePhase);
+}
+
+function setSiteMode(mode, options = {}) {
+  currentSiteMode = mode === "plain" ? "plain" : "technical";
+  window.localStorage.setItem("agiLoadingSiteMode", currentSiteMode);
+  renderSiteCopy();
+
+  if (options.updateUrl) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("site", currentSiteMode);
+    window.history.pushState({ article: url.searchParams.get("article"), site: currentSiteMode }, "", url);
+  }
 }
 
 function renderArticle(slug = "the-primitive", options = {}) {
@@ -304,9 +471,15 @@ function runBootSequence() {
 
 segments.forEach((segment) => {
   segment.addEventListener("click", () => {
-    const prior = segment.dataset.prior;
+    currentPrior = segment.dataset.prior;
     segments.forEach((item) => item.classList.toggle("is-active", item === segment));
-    priorSummary.textContent = summaries[prior];
+    updatePriorSummary();
+  });
+});
+
+siteModeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setSiteMode(button.dataset.siteMode, { updateUrl: true });
   });
 });
 
@@ -337,9 +510,16 @@ function observeDynamicContent() {
 }
 
 buildSeriesGrid();
-renderPrimitiveDiagram();
-renderArticle(new URLSearchParams(window.location.search).get("article") || "the-primitive");
+const initialParams = new URLSearchParams(window.location.search);
+const storedSiteMode = window.localStorage.getItem("agiLoadingSiteMode");
+const initialSiteMode = initialParams.get("site");
+currentSiteMode = initialSiteMode === "plain" || initialSiteMode === "technical" ? initialSiteMode : storedSiteMode === "plain" ? "plain" : "technical";
+renderSiteCopy();
+renderArticle(initialParams.get("article") || "the-primitive");
 
 window.addEventListener("popstate", () => {
-  renderArticle(new URLSearchParams(window.location.search).get("article") || "the-primitive");
+  const params = new URLSearchParams(window.location.search);
+  currentSiteMode = params.get("site") === "plain" ? "plain" : "technical";
+  renderSiteCopy();
+  renderArticle(params.get("article") || "the-primitive");
 });

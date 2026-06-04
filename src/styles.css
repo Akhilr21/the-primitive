@@ -352,6 +352,12 @@ button {
   background: rgba(18, 18, 22, 0.5);
 }
 
+.site-mode-control {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
 .strip-label {
   display: block;
   margin-bottom: 8px;
