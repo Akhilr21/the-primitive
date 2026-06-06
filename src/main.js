@@ -90,8 +90,9 @@ const siteCopy = {
     knowledgeIntro:
       "A folder-style map of the two foundation papers, the harness layer they imply, and the article that sits on top.",
     railTitle: "Reader Harness",
-    footerLead: "AGI Loading wraps",
-    footerTail: "as a playable article surface.",
+    footerLead:
+      "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
+    footerTail: "to understand what RSI could look like. It is an OSS community; if you have ideas, reach out.",
     phases: {
       observe: ["Observe Work", "Import local traces and ask what work keeps recurring."],
       decompose: ["Find Families", "Group sessions by signals, files, handoffs, and repeated outcomes."],
@@ -111,8 +112,9 @@ const siteCopy = {
     knowledgeIntro:
       "Think of this like a project folder: the article is the visible page, but underneath it are the papers and tool ideas that make it work.",
     railTitle: "Reader Guide",
-    footerLead: "AGI Loading turns",
-    footerTail: "into an interactive reading room.",
+    footerLead:
+      "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
+    footerTail: "to understand what RSI could look like. It is an OSS community; if you have ideas, reach out.",
     phases: {
       observe: ["Watch the Work", "Notice what people and AI agents keep doing again and again."],
       decompose: ["Find the Pattern", "Group similar work so the system can see what usually goes right or wrong."],
