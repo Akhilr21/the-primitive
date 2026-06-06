@@ -1600,6 +1600,10 @@ button {
   display: block;
 }
 
+.article-layout.route-page.is-route-active {
+  display: grid;
+}
+
 .topbar {
   background: rgba(255, 255, 255, 0.92);
   border-bottom-color: var(--border);
@@ -1626,6 +1630,11 @@ button {
   margin-bottom: 0;
   background: #ffffff;
   border-block: 1px solid var(--border-soft);
+}
+
+.rail,
+.artifact-panel {
+  position: static;
 }
 
 .segmented {
