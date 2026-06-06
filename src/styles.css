@@ -634,7 +634,7 @@ button {
 .knowledge-section {
   max-width: 1220px;
   margin: 0 auto;
-  padding: 0 clamp(18px, 4vw, 48px) 72px;
+  padding: 12px clamp(18px, 4vw, 48px) 72px;
   scroll-margin-top: 84px;
 }
 

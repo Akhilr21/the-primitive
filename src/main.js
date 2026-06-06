@@ -261,7 +261,7 @@ function getRouteFromLocation() {
   }
 
   if (path === "/source") {
-    return { name: "source", article: currentArticleSlug };
+    return { name: "home", article: currentArticleSlug };
   }
 
   const legacyArticle = new URLSearchParams(window.location.search).get("article");
@@ -274,7 +274,6 @@ function updateRouteLinks(activeRoute) {
     const isActive =
       (activeRoute.name === "home" && linkPath === "/") ||
       (activeRoute.name === "map" && linkPath === "/map") ||
-      (activeRoute.name === "source" && linkPath === "/source") ||
       (activeRoute.name === "article" && linkPath.startsWith("/article/"));
 
     link.classList.toggle("is-active", isActive);
