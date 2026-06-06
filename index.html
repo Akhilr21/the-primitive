@@ -74,7 +74,7 @@
       </section>
 
       <section class="control-strip" aria-label="Reader controls">
-        <div>
+        <div class="reader-prior-control" hidden>
           <span class="strip-label">reader prior</span>
           <div class="segmented" role="group" aria-label="Choose reader prior">
             <button class="segment is-active" type="button" data-prior="builder">Builder</button>
@@ -82,7 +82,7 @@
             <button class="segment" type="button" data-prior="operator">Operator</button>
           </div>
         </div>
-        <p class="prior-summary" id="priorSummary" aria-live="polite">
+        <p class="prior-summary" id="priorSummary" aria-live="polite" hidden>
           Builder view: focus on what the CLI gives the agent that a skill alone cannot hold.
         </p>
         <div class="site-mode-control">

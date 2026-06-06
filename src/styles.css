@@ -352,6 +352,7 @@ button {
   display: grid;
   gap: 8px;
   justify-items: start;
+  margin-left: auto;
 }
 
 .strip-label {
