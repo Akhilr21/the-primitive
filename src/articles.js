@@ -64,6 +64,72 @@ const primitiveHtml = `
 </section>
 `;
 
+const primitiveResearcherHtml = `
+<section class="variant-note">
+  <h3>Researcher Rewrite</h3>
+  <p>This version rewrites the original Primitive article as a technical research note. It keeps the original thesis but reframes it through harness optimization, filesystem-mediated feedback, and human-governed recursive self-improvement.</p>
+</section>
+<section>
+  <h3>Research Framing</h3>
+  <p class="article-lede">The primitive is not a skill generator. It is a proposal for a local, inspectable harness-optimization substrate: a minimal system that turns repeated user-agent work into candidate changes to the environment around the model.</p>
+  <p>The original article argues from a product and builder perspective: model capability is increasingly mediated by scaffolding, and the smallest useful intervention may be a local skill factory rather than a full rewrite of a coding agent. From a research perspective, the same claim can be stated more precisely: the object of optimization should shift from isolated prompts or skills toward the <em>harness</em>, meaning the executable procedure that controls context construction, tool access, memory, state updates, and review surfaces.</p>
+  <p>This follows the central observation in <a href="https://arxiv.org/html/2603.28052v1">Meta-Harness: End-to-End Optimization of Model Harnesses</a>: performance depends not only on model weights, but also on the code that decides what information is stored, retrieved, and presented to the model. The paper frames harness engineering as a code-search problem over the model's surrounding system, not as a narrow prompt-editing problem.</p>
+  <p>The Primitive takes that research direction and asks for the smallest locally useful instantiation. If Meta-Harness searches over task-specific harness programs at benchmark scale, the local primitive searches over personal workflow infrastructure at workspace scale.</p>
+</section>
+
+<section>
+  <h3>From Meta-Harness to Local Primitive</h3>
+  <p>Meta-Harness introduces an outer loop in which a proposer agent inspects prior candidate harnesses, execution traces, and evaluation scores stored in a filesystem, then proposes new harness code. Candidate harnesses are evaluated, their logs are written back into the filesystem, and the loop repeats. The important design choice is that the proposer receives rich, selective access to history through ordinary developer operations rather than a compressed prompt summary.</p>
+  <p>The local primitive preserves that structure but changes the unit of work. Instead of optimizing a benchmark harness for online classification, retrieval-augmented reasoning, or TerminalBench-style coding tasks, it optimizes recurring local workflows. A workflow becomes an object that can be detected, named, bundled, critiqued, evaluated, and optionally promoted into future behavior.</p>
+  <p>In formal terms, let a local agent environment be an executable harness <code>H_t</code> around a fixed model <code>M</code>. The harness determines which files are read, which tools are exposed, how state is persisted, how user preferences are retrieved, and what artifacts are produced. A user task produces a trajectory <code>tau_t</code>: commands, file edits, intermediate reasoning surfaces, generated artifacts, failures, and final outputs. The primitive's job is to convert repeated trajectories into a candidate harness delta <code>Delta H_t</code>.</p>
+  <p>This makes the system recursive, but not mystical. It does not require changing model weights. It changes the local computational environment in which the model operates. The recursion is: harness-mediated work produces traces; traces diagnose weaknesses in the harness; proposed harness changes are reviewed; accepted changes modify the next work environment.</p>
+</section>
+
+<section>
+  <h3>Why Skills Are an Output, Not the Primitive</h3>
+  <p>The original article emphasizes a practical distinction: if the output is only <code>SKILL.md</code>, the system is too narrow. A skill is one possible artifact emitted by the loop. It is not the loop itself.</p>
+  <p>From the Meta-Harness lens, this matters because the search space is code-space and workflow-space, not just instruction-space. A recurring workflow may need a skill, but it may also need a CLI command, a filesystem convention, a redaction policy, an evaluation harness, a browser automation, a document template, a rubric, a visual inspection page, or a promotion gate. Treating skills as the universal target would collapse the action space too aggressively.</p>
+  <p>The primitive therefore needs an intermediate representation: a candidate optimization bundle. In the current local implementation, that bundle can include <code>workflow.json</code>, <code>evidence.json</code>, <code>SKILL.md</code>, <code>CRITIQUE.md</code>, and <code>scorecard.json</code>. The exact filenames are less important than the contract: every proposed persistent behavior should carry its evidence, trigger conditions, risks, evaluation criteria, and rollback story.</p>
+  <p>This is the product analogue of the Meta-Harness filesystem. The filesystem is not merely storage; it is the feedback channel that gives future proposers access to prior source, traces, scores, and failures. Locally, the reviewable bundle becomes the boundary between automated discovery and human-governed persistence.</p>
+</section>
+
+<section>
+  <h3>Credit Assignment Over Workflows</h3>
+  <p>A major reason harness optimization is hard is credit assignment. Many failures appear at the final answer, but the cause may sit earlier in context selection, memory retrieval, tool ordering, prompt construction, state mutation, or evaluation design. Meta-Harness argues that compressed feedback can erase the information needed to connect downstream failures to earlier harness decisions.</p>
+  <p>The Primitive inherits the same problem at the level of personal work. Suppose an agent repeatedly turns research notes into publishable field notes. A poor result may be caused by missing source preservation, weak outline generation, bad citation routing, inadequate visual QA, incorrect audience framing, or a stale local convention. A scalar rating such as "good" or "bad" is not enough to identify which part of the workflow should become infrastructure.</p>
+  <p>The local factory therefore needs to retain high-granularity traces: which files were inspected, which commands were run, which artifacts were created, which edits were discarded, where the user corrected the agent, and which final structure survived review. Those traces allow the system to detect workflow families and propose targeted deltas. The optimization target becomes the procedure by which work is done, not the last output alone.</p>
+  <p>This is why the primitive should be CLI-backed. A chat-only skill can notice a pattern, but a CLI can materialize the pattern as durable evidence and artifacts. It can read logs, redact sensitive data, write candidate bundles, run validation, compare alternatives, and expose a review UI outside the lifetime of a single conversation.</p>
+</section>
+
+<section>
+  <h3>Human-Governed Recursive Self-Improvement</h3>
+  <p>The phrase recursive self-improvement can sound like an unbounded autonomy claim. In this context it should mean something narrower and more useful: the harness can improve the local conditions for future harness-mediated work, under explicit review constraints.</p>
+  <p>The local loop can be described as:</p>
+  <ol>
+    <li><code>Observe</code>: import trajectories from repeated work sessions.</li>
+    <li><code>Decompose</code>: cluster trajectories into workflow families and identify likely harness-level bottlenecks.</li>
+    <li><code>Propose</code>: generate candidate artifacts that modify future behavior.</li>
+    <li><code>Critique</code>: attach risks, evidence, trigger rules, and evaluation criteria.</li>
+    <li><code>Promote</code>: let the user accept, revise, reject, or roll back persistent changes.</li>
+  </ol>
+  <p>That loop is recursive because promotion changes the future environment that will generate the next traces. It is governed because persistence is not automatic. The system can search and propose, but the user controls which behaviors become part of the durable harness.</p>
+  <p>This is the key difference between personalization and silent mutation. A useful personal harness should learn, but it should make its learning legible. It should answer: what pattern was observed, what artifact is proposed, what evidence supports it, what risk it introduces, when it should trigger, and how it can be removed.</p>
+</section>
+
+<section>
+  <h3>Research Hypothesis</h3>
+  <p>The research hypothesis is that a small local factory can approximate the first useful layer of Meta-Harness-style optimization for personal software. It will not discover globally optimal harnesses, and it should not pretend to. Its value is in turning tacit repeated work into inspectable, reviewable, persistent infrastructure.</p>
+  <p>There are three testable claims:</p>
+  <ul>
+    <li><strong>Workflow recurrence is detectable.</strong> Local traces contain enough signal to identify repeated task families without requiring a centralized product telemetry system.</li>
+    <li><strong>Harness deltas are useful artifacts.</strong> The right output is often not a final answer, but a change to the environment that improves future answers.</li>
+    <li><strong>Reviewability is the safety boundary.</strong> Users are more likely to trust adaptive software when proposed persistence comes with evidence, critique, and rollback.</li>
+  </ul>
+  <p>If these claims hold, the Primitive becomes a bridge between current coding-agent workflows and adaptive personal software. It starts as a local CLI because that is the smallest substrate with enough agency, memory, and filesystem access to make the loop real. Over time, the same pattern can move into richer product surfaces: editors, research workspaces, document systems, browsers, and agent runtimes.</p>
+  <p>The deeper point is that the primitive is not "make me a skill." It is: convert repeated work into governed harness updates. That is the smallest version of recursive self-improvement that feels immediately useful, inspectable, and safe enough to run in a personal workspace.</p>
+</section>
+`;
+
 export const articles = [
   {
     slug: "the-primitive",
@@ -76,6 +142,14 @@ export const articles = [
     topics: ["primitive", "skill-factory", "CLI substrate"],
     accent: "#99e35d",
     html: primitiveHtml,
+    variants: {
+      researcher: {
+        read: "12 min",
+        summary:
+          "A research rewrite of the Primitive as a local, human-governed harness-optimization substrate grounded in Meta-Harness.",
+        html: primitiveResearcherHtml
+      }
+    },
     references: [
       {
         kind: "source",

@@ -3,7 +3,7 @@ import { articles } from "./articles.js";
 const summaries = {
   technical: {
     builder: "Builder view: focus on what the CLI gives the agent that a skill alone cannot hold.",
-    researcher: "Researcher view: focus on the local learning loop as a small eval substrate for personalization.",
+    researcher: "Researcher view: the Primitive article becomes a technical rewrite grounded in Meta-Harness and harness-level credit assignment.",
     operator: "Operator view: focus on reviewable artifacts, promotion gates, and rollback before persistent behavior."
   },
   plain: {
@@ -595,6 +595,14 @@ function updatePriorSummary() {
   priorSummary.textContent = summaries[currentSiteMode][currentPrior] || summaries.technical.builder;
 }
 
+function getArticleVariant(article) {
+  if (article.slug === "the-primitive" && currentPrior === "researcher") {
+    return article.variants?.researcher || {};
+  }
+
+  return {};
+}
+
 function renderSiteCopy() {
   const copy = siteCopy[currentSiteMode] || siteCopy.technical;
 
@@ -641,15 +649,16 @@ function setSiteMode(mode, options = {}) {
 
 function renderArticle(slug = "the-primitive", options = {}) {
   const article = articles.find((item) => item.slug === slug) || articles[0];
+  const variant = getArticleVariant(article);
   currentArticleSlug = article.slug;
 
   document.documentElement.style.setProperty("--active-accent", "var(--accent)");
   articleTitle.textContent = article.title;
-  articleSummary.textContent = article.summary;
+  articleSummary.textContent = variant.summary || article.summary;
   articleMeta.textContent = `AGI Loading / ${article.issue} / ${article.author}`;
   articleIssue.textContent = article.issue;
-  articleReadTime.textContent = `${formatDate(article.date)} / ${article.read}`;
-  articleBody.innerHTML = normalizeImportedHtml(article.html);
+  articleReadTime.textContent = `${formatDate(article.date)} / ${variant.read || article.read}`;
+  articleBody.innerHTML = normalizeImportedHtml(variant.html || article.html);
 
   seriesGrid.querySelectorAll("[data-article]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.article === article.slug);
@@ -700,6 +709,7 @@ segments.forEach((segment) => {
     currentPrior = segment.dataset.prior;
     segments.forEach((item) => item.classList.toggle("is-active", item === segment));
     updatePriorSummary();
+    renderArticle(currentArticleSlug);
   });
 });
 
