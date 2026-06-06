@@ -348,6 +348,10 @@ button {
   background: rgba(18, 18, 22, 0.5);
 }
 
+.control-strip[hidden] {
+  display: none;
+}
+
 .site-mode-control {
   display: grid;
   gap: 8px;
