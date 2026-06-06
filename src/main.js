@@ -103,7 +103,7 @@ const siteCopy = {
     knowledgeKicker: "Lineage Map",
     knowledgeTitle: "How the Harness Thread Branches",
     knowledgeIntro:
-      "A lineage graph of the shared harness paper, the Vishal and Akhil branches, and the loose ideas that may later reconnect as load-bearing pieces.",
+      "A lineage graph of the shared harness paper, the articles that split from it, and the loose ideas that may later reconnect as load-bearing pieces.",
     railTitle: "Reader Harness",
     footerLead:
       "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
@@ -149,37 +149,21 @@ const knowledgeMaps = {
       tags: ["shared origin", "harness layer", "outer loop"],
       flow: ["Name the harness", "Make traces inspectable", "Ask what can improve", "Branch into applications"]
     },
-    vishal: {
-      type: "branch",
-      title: "Vishal's branch",
-      summary:
-        "This branch follows the harness idea into product infrastructure: recommendation systems, ranking surfaces, feedback loops, and the operational substrate where self-improvement becomes measurable.",
-      tags: ["infrastructure", "recommendations", "feedback systems"],
-      flow: ["Harness as product loop", "Signals become memory", "Ranking becomes steering", "Infrastructure learns"]
-    },
     recs: {
       type: "field note",
-      title: "Harnesses as self-improving infrastructure",
+      title: "Harnesses as Self-Improving Infrastructure",
       summary:
-        "A more focused product lens: recommendation harnesses show how models, metrics, retrieval, ranking, and user feedback form an adaptive system even before anyone calls it RSI.",
-      tags: ["focused", "product lens", "adaptive ranking"],
-      flow: ["Collect signals", "Generate candidates", "Rank outcomes", "Update the world model"]
-    },
-    akhil: {
-      type: "branch",
-      title: "Akhil's branch",
-      summary:
-        "This branch follows the same root into the question of primitives: if a harness can learn, what is the smallest reviewable unit that should persist across future work?",
-      tags: ["primitive search", "persistence", "reviewable units"],
-      flow: ["Trace repeated work", "Search for reusable units", "Separate skill from substrate", "Ask what should persist"]
+        "This article branches from Autonomous Harness Engineering by moving the harness idea into recommendation systems. It shows how retrieval, ranking, feedback, metrics, and product surfaces already behave like adaptive harness infrastructure.",
+      tags: ["Vishal Tandale", "sub-branch", "adaptive ranking"],
+      flow: ["Parent defines harnesses", "This article applies the idea to recommendations", "Feedback becomes harness memory", "Ranking becomes self-improving behavior"]
     },
     primitive: {
       type: "current leaf",
       title: "The Primitive",
       summary:
-        "The current synthesis: the primitive may not be a prompt or isolated skill, but a CLI-backed learning harness with state, evidence, review gates, and rollback.",
-      tags: ["focused now", "CLI-backed primitive", "RSI substrate"],
-      flow: ["Harness root", "Meta-loop pressure", "Persistent unit", "Primitive as substrate"]
+        "This article branches from Autonomous Harness Engineering by asking what should persist after the harness learns. It argues that the smallest useful unit may not be a prompt or isolated skill, but a CLI-backed learning harness with state, evidence, review gates, and rollback.",
+      tags: ["Akhil Ramaswamy", "sub-branch", "RSI substrate"],
+      flow: ["Parent defines the harness loop", "This article asks what should persist", "CLI gives the unit substrate", "Review gates decide what survives"]
     },
     unfocused: {
       type: "drift zone",
@@ -207,37 +191,21 @@ const knowledgeMaps = {
       tags: ["starting point", "AI workbench", "learning setup"],
       flow: ["Name the workbench", "Save attempts", "Look for improvement", "Branch into articles"]
     },
-    vishal: {
-      type: "branch",
-      title: "Vishal's branch",
-      summary:
-        "Vishal's branch asks how this shows up in real product systems: recommendations, rankings, feedback, and infrastructure that keeps changing from signals.",
-      tags: ["product systems", "recommendations", "feedback"],
-      flow: ["Use signals", "Rank choices", "Learn from outcomes", "Improve the surface"]
-    },
     recs: {
       type: "field note",
-      title: "Harnesses as self-improving infrastructure",
+      title: "Harnesses as Self-Improving Infrastructure",
       summary:
-        "This note is more focused: it shows one concrete place where the harness idea matters, by looking at systems that recommend and adapt.",
-      tags: ["focused", "concrete example", "adaptive systems"],
-      flow: ["Collect feedback", "Generate options", "Rank them", "Change what users see"]
-    },
-    akhil: {
-      type: "branch",
-      title: "Akhil's branch",
-      summary:
-        "Akhil's branch asks what should be saved when the workflow improves. Is it a skill, a tool, a checklist, a CLI, or something deeper?",
-      tags: ["open question", "what to save", "primitive"],
-      flow: ["Notice repeated work", "Ask what matters", "Find the smallest unit", "Make it reviewable"]
+        "This article branches from the first harness note by applying the idea to recommendation systems. The system is not just choosing content; it is becoming infrastructure that learns from what people do.",
+      tags: ["Vishal Tandale", "sub-branch", "adaptive systems"],
+      flow: ["Parent names harnesses", "This article applies them to recommendations", "Feedback changes the system", "The loop becomes clearer"]
     },
     primitive: {
       type: "current leaf",
       title: "The Primitive",
       summary:
-        "This is the current answer: the useful unit may be a small learning harness, not just a prompt. It needs memory, tests, review, and rollback.",
-      tags: ["current answer", "small useful unit", "reviewable"],
-      flow: ["Start from harnesses", "Look at self-improvement", "Ask what persists", "Name the primitive"]
+        "This article branches from the first harness note by asking what should actually be saved and reused when a workflow improves. The current answer is a small learning harness, not just a prompt.",
+      tags: ["Akhil Ramaswamy", "sub-branch", "reviewable"],
+      flow: ["Parent names harnesses", "This article asks what persists", "The primitive needs substrate", "Review decides what survives"]
     },
     unfocused: {
       type: "loose ideas",
@@ -259,7 +227,9 @@ const knowledgeMaps = {
 };
 
 function buildSeriesGrid() {
-  seriesGrid.innerHTML = articles
+  const chronologicalArticles = [...articles].sort((a, b) => new Date(`${a.date}T12:00:00`) - new Date(`${b.date}T12:00:00`));
+
+  seriesGrid.innerHTML = chronologicalArticles
     .map(
       (article) => `
         <button class="series-card" type="button" data-article="${article.slug}" style="--card-accent: ${article.accent}">
