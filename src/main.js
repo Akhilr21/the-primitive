@@ -103,7 +103,7 @@ const siteCopy = {
     knowledgeKicker: "Lineage Map",
     knowledgeTitle: "How the Harness Thread Branches",
     knowledgeIntro:
-      "A lineage graph of the shared harness paper, the articles that split from it, and the loose ideas that may later reconnect as load-bearing pieces.",
+      "A lineage graph of the Meta-Harness paper and the articles that build from it.",
     railTitle: "Reader Harness",
     footerLead:
       "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
@@ -125,7 +125,7 @@ const siteCopy = {
     knowledgeKicker: "Lineage Map",
     knowledgeTitle: "How the Ideas Split and Reconnect",
     knowledgeIntro:
-      "The articles can look scattered in the moment. This map shows the shared starting point, the two branches, and how a loose idea can later plug a real gap.",
+      "This map starts with the research paper, then shows the articles that turn the paper into field notes about harnesses, infrastructure, and primitives.",
     railTitle: "Reader Guide",
     footerLead:
       "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
@@ -143,19 +143,27 @@ const knowledgeMaps = {
   technical: {
     "paper-one": {
       type: "shared root",
-      title: "Autonomous Harness Engineering",
+      title: "Meta-Harness: End-to-End Optimization of Model Harnesses",
       summary:
-        "The root claim: the model is only one part of the intelligence system. The harness around it holds tools, traces, memory, context, and the outer loop that can learn from prior work.",
-      tags: ["shared origin", "harness layer", "outer loop"],
-      flow: ["Name the harness", "Make traces inspectable", "Ask what can improve", "Branch into applications"]
+        "The shared origin is the arXiv Meta-Harness paper. Its core claim is that performance depends on the harness around the model: the code and process that decide what to store, retrieve, show, evaluate, and rewrite.",
+      tags: ["arXiv:2603.28052", "research root", "harness optimization"],
+      flow: ["Define harness optimization", "Expose traces and scores", "Search over harness code", "Branch into field notes"]
+    },
+    autonomous: {
+      type: "field note",
+      title: "Autonomous Harness Engineering?",
+      summary:
+        "This article is the first field-note translation of the Meta-Harness paper. It explains why the harness around a model may matter as much as the model itself, especially for coding agents and trace-rich work.",
+      tags: ["Akhil Ramaswamy", "first article", "paper translation"],
+      flow: ["Root paper defines meta-harnesses", "This note translates the thesis", "Coding agents make it concrete", "The primitive question opens"]
     },
     recs: {
       type: "field note",
       title: "Harnesses as Self-Improving Infrastructure",
       summary:
-        "This article branches from Autonomous Harness Engineering by moving the harness idea into recommendation systems. It shows how retrieval, ranking, feedback, metrics, and product surfaces already behave like adaptive harness infrastructure.",
+        "This article branches from the Meta-Harness paper by moving the harness idea into recommendation systems. It shows how retrieval, ranking, feedback, metrics, and product surfaces already behave like adaptive harness infrastructure.",
       tags: ["Vishal Tandale", "sub-branch", "adaptive ranking"],
-      flow: ["Parent defines harnesses", "This article applies the idea to recommendations", "Feedback becomes harness memory", "Ranking becomes self-improving behavior"]
+      flow: ["Root paper defines harnesses", "This article applies the idea to recommendations", "Feedback becomes harness memory", "Ranking becomes self-improving behavior"]
     },
     primitive: {
       type: "current leaf",
@@ -163,41 +171,33 @@ const knowledgeMaps = {
       summary:
         "This article branches from Autonomous Harness Engineering by asking what should persist after the harness learns. It argues that the smallest useful unit may not be a prompt or isolated skill, but a CLI-backed learning harness with state, evidence, review gates, and rollback.",
       tags: ["Akhil Ramaswamy", "sub-branch", "RSI substrate"],
-      flow: ["Parent defines the harness loop", "This article asks what should persist", "CLI gives the unit substrate", "Review gates decide what survives"]
-    },
-    unfocused: {
-      type: "drift zone",
-      title: "Loose threads",
-      summary:
-        "Some notes will look unfocused because they are exploring around the edge of the concept: metrics, social distribution, interfaces, evals, source maps, and reader priors.",
-      tags: ["exploration", "weak signal", "not wasted"],
-      flow: ["Notice side question", "Write partial note", "Leave trace", "Wait for missing context"]
-    },
-    "future-hole": {
-      type: "reconnect",
-      title: "Later, a missing hole appears",
-      summary:
-        "The dynamic version of this map should let a disconnected note snap back into the graph once a later article reveals the hole it fills. What looked like drift becomes lineage evidence.",
-      tags: ["dynamic graph", "latent dependency", "future synthesis"],
-      flow: ["New problem appears", "Old note becomes relevant", "Edge gets promoted", "Lineage updates"]
+      flow: ["Prior note frames the harness loop", "This article asks what should persist", "CLI gives the unit substrate", "Review gates decide what survives"]
     }
   },
   plain: {
     "paper-one": {
       type: "shared root",
-      title: "Autonomous Harness Engineering",
+      title: "Meta-Harness: End-to-End Optimization of Model Harnesses",
       summary:
-        "The starting idea: AI systems are not just models. They also include the workbench around the model: tools, memory, saved attempts, feedback, and tests.",
-      tags: ["starting point", "AI workbench", "learning setup"],
-      flow: ["Name the workbench", "Save attempts", "Look for improvement", "Branch into articles"]
+        "The starting point is the Meta-Harness paper. It says AI systems are not just models; they also include the workbench around the model: tools, memory, saved attempts, feedback, tests, and code that can improve.",
+      tags: ["arXiv:2603.28052", "research root", "learning setup"],
+      flow: ["Define the workbench", "Save attempts", "Improve the harness", "Branch into articles"]
+    },
+    autonomous: {
+      type: "field note",
+      title: "Autonomous Harness Engineering?",
+      summary:
+        "This article turns the research paper into a field note. It explains why the harness around a model matters and why coding agents make the idea feel practical.",
+      tags: ["Akhil Ramaswamy", "first article", "paper translation"],
+      flow: ["Start from the paper", "Explain the harness idea", "Apply it to coding agents", "Open the primitive question"]
     },
     recs: {
       type: "field note",
       title: "Harnesses as Self-Improving Infrastructure",
       summary:
-        "This article branches from the first harness note by applying the idea to recommendation systems. The system is not just choosing content; it is becoming infrastructure that learns from what people do.",
+        "This article branches from the research paper by applying the harness idea to recommendation systems. The system is not just choosing content; it is becoming infrastructure that learns from what people do.",
       tags: ["Vishal Tandale", "sub-branch", "adaptive systems"],
-      flow: ["Parent names harnesses", "This article applies them to recommendations", "Feedback changes the system", "The loop becomes clearer"]
+      flow: ["Start from the paper", "Apply it to recommendations", "Feedback changes the system", "The loop becomes clearer"]
     },
     primitive: {
       type: "current leaf",
@@ -205,23 +205,7 @@ const knowledgeMaps = {
       summary:
         "This article branches from the first harness note by asking what should actually be saved and reused when a workflow improves. The current answer is a small learning harness, not just a prompt.",
       tags: ["Akhil Ramaswamy", "sub-branch", "reviewable"],
-      flow: ["Parent names harnesses", "This article asks what persists", "The primitive needs substrate", "Review decides what survives"]
-    },
-    unfocused: {
-      type: "loose ideas",
-      title: "Loose threads",
-      summary:
-        "Some articles may feel disconnected because they are exploring nearby questions. That is not always bad; it can be how the map finds the next gap.",
-      tags: ["exploration", "nearby ideas", "weak signal"],
-      flow: ["Ask side question", "Write the note", "Keep the trace", "See if it returns"]
-    },
-    "future-hole": {
-      type: "reconnect",
-      title: "Later, a missing hole appears",
-      summary:
-        "A future article may reveal that an older loose idea was actually important. The map should be able to reconnect that idea instead of treating it as noise.",
-      tags: ["future link", "hidden value", "dynamic map"],
-      flow: ["Find a new gap", "Remember old note", "Connect it back", "Update the lineage"]
+      flow: ["Prior note names harnesses", "This article asks what persists", "The primitive needs substrate", "Review decides what survives"]
     }
   }
 };

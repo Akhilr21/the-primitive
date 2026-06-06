@@ -148,46 +148,38 @@
           <p class="kicker" id="knowledgeKicker">Lineage Map</p>
           <h2 id="knowledge-title">How the Harness Thread Branches</h2>
           <p id="knowledgeIntro">
-            A lineage view of the original harness paper, the articles that split from it, and the way loose ideas can later reconnect into a missing piece.
+            A lineage view of the Meta-Harness paper and the articles that build from it.
           </p>
         </div>
         <div class="knowledge-layout">
           <div class="folder-tree lineage-map" role="tree" aria-label="Harness article lineage map">
             <button class="tree-item lineage-node lineage-root is-active" type="button" data-knowledge-node="paper-one" role="treeitem">
               <span class="tree-icon" aria-hidden="true">root</span>
-              <span>Autonomous Harness Engineering</span>
-              <small>shared origin</small>
+              <span>Meta-Harness: End-to-End Optimization of Model Harnesses</span>
+              <small>arXiv:2603.28052</small>
             </button>
 
             <div class="lineage-split" role="group" aria-label="Article branches">
               <div class="lineage-lane">
-                <button class="tree-item lineage-node" type="button" data-knowledge-node="recs" role="treeitem">
+                <button class="tree-item lineage-node" type="button" data-knowledge-node="autonomous" role="treeitem">
                   <span class="tree-icon" aria-hidden="true">01</span>
-                  <span>Harnesses as Self-Improving Infrastructure</span>
-                  <small>Vishal Tandale</small>
+                  <span>Autonomous Harness Engineering?</span>
+                  <small>Akhil Ramaswamy</small>
                 </button>
-              </div>
-
-              <div class="lineage-lane">
-                <button class="tree-item lineage-node" type="button" data-knowledge-node="primitive" role="treeitem">
-                  <span class="tree-icon" aria-hidden="true">02</span>
+                <button class="tree-item lineage-node tree-indent" type="button" data-knowledge-node="primitive" role="treeitem">
+                  <span class="tree-icon" aria-hidden="true">1A</span>
                   <span>The Primitive</span>
                   <small>Akhil Ramaswamy</small>
                 </button>
               </div>
-            </div>
 
-            <div class="lineage-reconnect" role="group" aria-label="Future reconnect">
-              <button class="tree-item lineage-node" type="button" data-knowledge-node="unfocused" role="treeitem">
-                <span class="tree-icon" aria-hidden="true">?</span>
-                <span>Loose threads</span>
-                <small>unfocused now</small>
-              </button>
-              <button class="tree-item lineage-node tree-indent" type="button" data-knowledge-node="future-hole" role="treeitem">
-                <span class="tree-icon" aria-hidden="true">plug</span>
-                <span>Later, a missing hole appears</span>
-                <small>dynamic reconnect</small>
-              </button>
+              <div class="lineage-lane">
+                <button class="tree-item lineage-node" type="button" data-knowledge-node="recs" role="treeitem">
+                  <span class="tree-icon" aria-hidden="true">02</span>
+                  <span>Harnesses as Self-Improving Infrastructure</span>
+                  <small>Vishal Tandale</small>
+                </button>
+              </div>
             </div>
           </div>
 
