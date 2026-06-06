@@ -55,11 +55,14 @@ const knowledgeCardTitle = document.querySelector("#knowledgeTitle");
 const knowledgeSummary = document.querySelector("#knowledgeSummary");
 const knowledgeTags = document.querySelector("#knowledgeTags");
 const knowledgeFlow = document.querySelector("#knowledgeFlow");
+const routePages = document.querySelectorAll("[data-route-page]");
+const routeLinks = document.querySelectorAll("[data-route-link]");
 
 let currentPrior = "builder";
 let currentSiteMode = "technical";
 let currentPrimitivePhase = "observe";
 let currentKnowledgeNode = "primitive";
+let currentArticleSlug = "the-primitive";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
@@ -238,10 +241,80 @@ function buildSeriesGrid() {
 
   seriesGrid.querySelectorAll("[data-article]").forEach((button) => {
     button.addEventListener("click", () => {
-      renderArticle(button.dataset.article, { updateUrl: true });
-      document.querySelector(".article-header").scrollIntoView({ block: "start", behavior: "smooth" });
+      navigateTo(`/article/${button.dataset.article}`);
     });
   });
+}
+
+function getRouteFromLocation() {
+  const path = window.location.pathname.replace(/\/$/, "") || "/";
+
+  if (path.startsWith("/article/")) {
+    return {
+      name: "article",
+      article: decodeURIComponent(path.replace("/article/", "")) || "the-primitive"
+    };
+  }
+
+  if (path === "/map") {
+    return { name: "map", article: currentArticleSlug };
+  }
+
+  if (path === "/source") {
+    return { name: "source", article: currentArticleSlug };
+  }
+
+  const legacyArticle = new URLSearchParams(window.location.search).get("article");
+  return { name: "home", article: legacyArticle || currentArticleSlug };
+}
+
+function updateRouteLinks(activeRoute) {
+  routeLinks.forEach((link) => {
+    const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, "") || "/";
+    const isActive =
+      (activeRoute.name === "home" && linkPath === "/") ||
+      (activeRoute.name === "map" && linkPath === "/map") ||
+      (activeRoute.name === "source" && linkPath === "/source") ||
+      (activeRoute.name === "article" && linkPath.startsWith("/article/"));
+
+    link.classList.toggle("is-active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+function renderRoute(options = {}) {
+  const route = getRouteFromLocation();
+  updateRouteLinks(route);
+
+  routePages.forEach((page) => {
+    page.classList.toggle("is-route-active", page.dataset.routePage === route.name);
+  });
+
+  if (route.name === "article") {
+    renderArticle(route.article);
+  }
+
+  if (route.name === "home") {
+    seriesGrid.querySelectorAll("[data-article]").forEach((button) => {
+      button.classList.remove("is-active");
+    });
+  }
+
+  if (options.scroll !== false) {
+    window.scrollTo({ top: 0, behavior: options.smooth ? "smooth" : "auto" });
+  }
+}
+
+function navigateTo(path) {
+  const url = new URL(window.location.href);
+  url.pathname = path;
+  url.hash = "";
+  window.history.pushState({}, "", url);
+  renderRoute({ smooth: true });
 }
 
 const simPresets = {
@@ -568,8 +641,9 @@ function setSiteMode(mode, options = {}) {
 
 function renderArticle(slug = "the-primitive", options = {}) {
   const article = articles.find((item) => item.slug === slug) || articles[0];
+  currentArticleSlug = article.slug;
 
-  document.documentElement.style.setProperty("--active-accent", article.accent);
+  document.documentElement.style.setProperty("--active-accent", "var(--accent)");
   articleTitle.textContent = article.title;
   articleSummary.textContent = article.summary;
   articleMeta.textContent = `AGI Loading / ${article.issue} / ${article.author}`;
@@ -587,8 +661,9 @@ function renderArticle(slug = "the-primitive", options = {}) {
 
   if (options.updateUrl) {
     const url = new URL(window.location.href);
-    url.searchParams.set("article", article.slug);
-    window.history.pushState({ article: article.slug }, "", url);
+    url.pathname = `/article/${article.slug}`;
+    url.searchParams.delete("article");
+    window.history.pushState({}, "", url);
   }
 }
 
@@ -634,6 +709,18 @@ siteModeButtons.forEach((button) => {
   });
 });
 
+routeLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const url = new URL(link.href, window.location.origin);
+    if (url.origin !== window.location.origin) {
+      return;
+    }
+
+    event.preventDefault();
+    navigateTo(url.pathname);
+  });
+});
+
 phaseCards.forEach((card) => {
   card.addEventListener("click", () => {
     phaseCards.forEach((item) => item.classList.toggle("is-selected", item === card));
@@ -647,7 +734,9 @@ treeItems.forEach((item) => {
   });
 });
 
-bootButton.addEventListener("click", runBootSequence);
+if (bootButton) {
+  bootButton.addEventListener("click", runBootSequence);
+}
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -674,11 +763,12 @@ const storedSiteMode = window.localStorage.getItem("agiLoadingSiteMode");
 const initialSiteMode = initialParams.get("site");
 currentSiteMode = initialSiteMode === "plain" || initialSiteMode === "technical" ? initialSiteMode : storedSiteMode === "plain" ? "plain" : "technical";
 renderSiteCopy();
-renderArticle(initialParams.get("article") || "the-primitive");
+renderArticle(getRouteFromLocation().article);
+renderRoute({ scroll: false });
 
 window.addEventListener("popstate", () => {
   const params = new URLSearchParams(window.location.search);
   currentSiteMode = params.get("site") === "plain" ? "plain" : "technical";
   renderSiteCopy();
-  renderArticle(params.get("article") || "the-primitive");
+  renderRoute({ scroll: false });
 });

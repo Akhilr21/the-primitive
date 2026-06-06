@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#09090a" />
+    <meta name="theme-color" content="#ffffff" />
     <meta
       name="description"
       content="AGI Loading: interactive field notes on harnesses, meta-harnesses, and the software around model intelligence."
@@ -18,17 +18,17 @@
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#article">Skip to Article</a>
+    <a class="skip-link" href="#series">Skip to Articles</a>
     <header class="topbar" aria-label="Site">
-      <a class="brand" href="https://harnessseries-site.vercel.app/posts/autonomous-harness-engineering">
+      <a class="brand" href="/" data-route-link>
         <span class="brand-dot" aria-hidden="true"></span>
         <span>AGI Loading</span>
       </a>
       <nav class="topnav" aria-label="Page">
-        <a href="#primitive-map">Primitive Map</a>
-        <a href="#knowledge-map">Source Tree</a>
-        <a href="#series">Series</a>
-        <a href="#article">Reader</a>
+        <a href="/" data-route-link>Articles</a>
+        <a href="/map" data-route-link>Primitive Map</a>
+        <a href="/source" data-route-link>Source Tree</a>
+        <a href="/article/the-primitive" data-route-link>Reader</a>
       </nav>
       <a class="source-link" href="https://docs.google.com/document/d/1uefuLa-DUoFzvlmSFwC8kbj3hrRPAN7m/edit">
         Google Doc
@@ -45,7 +45,7 @@
           </p>
           <div class="hero-actions" aria-label="Primary links">
             <button class="button primary" type="button" id="bootButton">Start Boot</button>
-            <a class="button ghost" href="#article">Enter Reader</a>
+            <a class="button ghost" href="/article/the-primitive" data-route-link>Enter Reader</a>
           </div>
         </div>
 
@@ -94,7 +94,7 @@
         </div>
       </section>
 
-      <section class="map-section" id="primitive-map" aria-labelledby="map-title">
+      <section class="map-section route-page" id="primitive-map" aria-labelledby="map-title" data-route-page="map">
         <div class="section-heading">
           <p class="kicker" id="mapKicker">Inspectable Substrate</p>
           <h2 id="map-title">The Skill Factory Is a Loop, Not a Prompt</h2>
@@ -135,7 +135,7 @@
         </div>
       </section>
 
-      <section class="knowledge-section" id="knowledge-map" aria-labelledby="knowledge-title">
+      <section class="knowledge-section route-page" id="knowledge-map" aria-labelledby="knowledge-title" data-route-page="source">
         <div class="section-heading">
           <p class="kicker" id="knowledgeKicker">Primitive Source Tree</p>
           <h2 id="knowledge-title">Where the Primitive Comes From</h2>
@@ -195,7 +195,7 @@
         </div>
       </section>
 
-      <section class="series-section" id="series" aria-labelledby="series-title">
+      <section class="series-section route-page" id="series" aria-labelledby="series-title" data-route-page="home">
         <div class="section-heading">
           <p class="kicker" id="seriesKicker">Imported Harness Series</p>
           <h2 id="series-title">One Surface, 3 Harness Field Notes</h2>
@@ -203,7 +203,7 @@
         <div class="series-grid" id="seriesGrid" aria-label="Harness Series articles"></div>
       </section>
 
-      <div class="article-layout">
+      <div class="article-layout route-page" data-route-page="article">
         <aside class="rail" aria-labelledby="rail-title">
           <p class="kicker" id="rail-title">Reader Harness</p>
           <div class="rail-stack" id="articleToc" aria-label="Article sections"></div>
