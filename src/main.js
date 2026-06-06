@@ -57,12 +57,19 @@ const knowledgeTags = document.querySelector("#knowledgeTags");
 const knowledgeFlow = document.querySelector("#knowledgeFlow");
 const routePages = document.querySelectorAll("[data-route-page]");
 const routeLinks = document.querySelectorAll("[data-route-link]");
+const metricsQuery = document.querySelector("#metricsQuery");
+const metricsCards = document.querySelector("#metricsCards");
+const metricsRows = document.querySelector("#metricsRows");
+const metricsSource = document.querySelector("#metricsSource");
+const metricsType = document.querySelector("#metricsType");
+const metricsPath = document.querySelector("#metricsPath");
 
 let currentPrior = "builder";
 let currentSiteMode = "technical";
 let currentPrimitivePhase = "observe";
 let currentKnowledgeNode = "primitive";
 let currentArticleSlug = "the-primitive";
+let lastTrackedView = "";
 
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
@@ -76,6 +83,14 @@ const slugify = (value) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
+const escapeHtml = (value) =>
+  String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 const siteCopy = {
   technical: {
@@ -266,6 +281,10 @@ function getRouteFromLocation() {
     return { name: "home", article: currentArticleSlug };
   }
 
+  if (path === "/metrics") {
+    return { name: "metrics", article: currentArticleSlug };
+  }
+
   const legacyArticle = new URLSearchParams(window.location.search).get("article");
   return { name: "home", article: legacyArticle || currentArticleSlug };
 }
@@ -276,7 +295,8 @@ function updateRouteLinks(activeRoute) {
     const isActive =
       (activeRoute.name === "home" && linkPath === "/") ||
       (activeRoute.name === "map" && linkPath === "/map") ||
-      (activeRoute.name === "article" && linkPath.startsWith("/article/"));
+      (activeRoute.name === "article" && linkPath.startsWith("/article/")) ||
+      (activeRoute.name === "metrics" && linkPath === "/metrics");
 
     link.classList.toggle("is-active", isActive);
     if (isActive) {
@@ -305,9 +325,15 @@ function renderRoute(options = {}) {
     });
   }
 
+  if (route.name === "metrics") {
+    loadMetrics();
+  }
+
   if (options.scroll !== false) {
     window.scrollTo({ top: 0, behavior: options.smooth ? "smooth" : "auto" });
   }
+
+  trackPageView(route);
 }
 
 function navigateTo(path) {
@@ -474,6 +500,184 @@ const rsiDiagrams = {
     }
   }
 };
+
+function getSessionId() {
+  const key = "agiLoadingSessionId";
+  const existing = window.localStorage.getItem(key);
+  if (existing) {
+    return existing;
+  }
+
+  const sessionId = window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  window.localStorage.setItem(key, sessionId);
+  return sessionId;
+}
+
+function getReferrerHost() {
+  if (!document.referrer) {
+    return "direct";
+  }
+
+  try {
+    return new URL(document.referrer).hostname.replace(/^www\./, "") || "direct";
+  } catch {
+    return "unknown";
+  }
+}
+
+function getTrafficSource() {
+  const params = new URLSearchParams(window.location.search);
+  const taggedSource = params.get("src") || params.get("utm_source") || params.get("source") || params.get("ref");
+
+  if (taggedSource) {
+    return taggedSource.toLowerCase().replace(/[^a-z0-9_-]+/g, "_").slice(0, 80);
+  }
+
+  const referrerHost = getReferrerHost();
+  if (referrerHost.includes("linkedin")) {
+    return "linkedin";
+  }
+
+  return referrerHost === "direct" ? "direct" : referrerHost;
+}
+
+function metricPayload(type, details = {}) {
+  const route = getRouteFromLocation();
+  return {
+    id: window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+    type,
+    sessionId: getSessionId(),
+    source: getTrafficSource(),
+    referrerHost: getReferrerHost(),
+    path: window.location.pathname,
+    route: route.name,
+    article: route.article || currentArticleSlug,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+    ts: new Date().toISOString(),
+    ...details
+  };
+}
+
+function sendMetric(type, details = {}) {
+  const payload = metricPayload(type, details);
+  const body = JSON.stringify(payload);
+
+  if (navigator.sendBeacon) {
+    const blob = new Blob([body], { type: "application/json" });
+    navigator.sendBeacon("/api/metrics", blob);
+    return;
+  }
+
+  fetch("/api/metrics", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body,
+    keepalive: true
+  }).catch(() => {});
+}
+
+function trackPageView(route) {
+  const viewKey = `${window.location.pathname}${window.location.search}:${route.name}:${route.article || ""}`;
+  if (lastTrackedView === viewKey) {
+    return;
+  }
+
+  lastTrackedView = viewKey;
+  sendMetric("view", {
+    label: document.title
+  });
+}
+
+function metricEntries(record, limit = 6) {
+  return Object.entries(record || {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([label, count]) => `<span><strong>${escapeHtml(label)}</strong>${count}</span>`)
+    .join("");
+}
+
+function renderMetrics(payload) {
+  const summary = payload.summary || {};
+  const storageLabel = payload.storage === "redis" ? "persistent Redis" : "local memory";
+  metricsCards.innerHTML = `
+    <div class="metric-card">
+      <span>Total Events</span>
+      <strong>${summary.totalEvents || 0}</strong>
+      <small>${storageLabel}</small>
+    </div>
+    <div class="metric-card">
+      <span>Views</span>
+      <strong>${summary.views || 0}</strong>
+      <small>route loads</small>
+    </div>
+    <div class="metric-card">
+      <span>Clicks</span>
+      <strong>${summary.clicks || 0}</strong>
+      <small>buttons + links</small>
+    </div>
+    <div class="metric-card wide">
+      <span>Sources</span>
+      <div class="metric-list">${metricEntries(summary.sources) || "<em>No sources yet</em>"}</div>
+    </div>
+    <div class="metric-card wide">
+      <span>Top Clicks</span>
+      <div class="metric-list">${metricEntries(summary.clickTargets) || "<em>No clicks yet</em>"}</div>
+    </div>
+  `;
+
+  metricsRows.innerHTML = (payload.events || []).length
+    ? payload.events
+        .map(
+          (event) => `
+            <tr>
+              <td>${escapeHtml(new Date(event.ts).toLocaleString())}</td>
+              <td>${escapeHtml(event.type)}</td>
+              <td>${escapeHtml(event.source)}</td>
+              <td>${escapeHtml(event.path)}</td>
+              <td>${escapeHtml(event.label || event.href || event.article || event.route)}</td>
+            </tr>
+          `
+        )
+        .join("")
+    : `<tr><td colspan="5">No events matched this query.</td></tr>`;
+}
+
+async function loadMetrics() {
+  if (!metricsCards || !metricsRows) {
+    return;
+  }
+
+  const params = new URLSearchParams({ limit: "250" });
+  if (metricsSource?.value.trim()) {
+    params.set("source", metricsSource.value.trim());
+  }
+  if (metricsType?.value) {
+    params.set("type", metricsType.value);
+  }
+  if (metricsPath?.value.trim()) {
+    params.set("path", metricsPath.value.trim());
+  }
+
+  metricsCards.innerHTML = `<div class="metric-card wide"><span>Loading</span><strong>Querying events...</strong></div>`;
+
+  try {
+    const response = await fetch(`/api/metrics?${params.toString()}`, { headers: { accept: "application/json" } });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.error || "Metric query failed.");
+    }
+    renderMetrics(payload);
+  } catch (error) {
+    metricsCards.innerHTML = `
+      <div class="metric-card wide">
+        <span>Metrics unavailable</span>
+        <strong>${escapeHtml(error.message)}</strong>
+        <small>Add Redis REST env vars for production persistence.</small>
+      </div>
+    `;
+    metricsRows.innerHTML = `<tr><td colspan="5">No query results available.</td></tr>`;
+  }
+}
 
 function normalizeImportedHtml(html) {
   return html
@@ -744,6 +948,27 @@ treeItems.forEach((item) => {
     renderKnowledgeMap(item.dataset.knowledgeNode);
   });
 });
+
+document.addEventListener("click", (event) => {
+  const target = event.target.closest("a, button");
+  if (!target || target.closest("#metricsQuery")) {
+    return;
+  }
+
+  const label = target.dataset.metricLabel || target.textContent || target.getAttribute("aria-label") || target.href || "interaction";
+  sendMetric("click", {
+    label: label.replace(/\s+/g, " ").trim().slice(0, 120),
+    href: target.href || "",
+    article: target.dataset.article || currentArticleSlug
+  });
+});
+
+if (metricsQuery) {
+  metricsQuery.addEventListener("submit", (event) => {
+    event.preventDefault();
+    loadMetrics();
+  });
+}
 
 if (bootButton) {
   bootButton.addEventListener("click", runBootSequence);

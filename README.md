@@ -23,3 +23,27 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## Metrics
+
+The site tracks first-party view and click events through `/api/metrics` and
+renders a query surface at `/metrics`.
+
+For durable production storage, attach a Redis REST-compatible store such as
+Upstash and set these Vercel environment variables:
+
+```bash
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+```
+
+Without those variables, the API falls back to local in-memory storage for
+smoke testing only.
+
+Source attribution uses URL tags first, then the browser referrer host. For
+LinkedIn messages, use a tagged link because private-message referrers are not
+reliably exposed:
+
+```text
+https://agi-loading-akhil-field-notes.vercel.app/?src=linkedin_dm
+```

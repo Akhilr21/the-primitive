@@ -28,6 +28,7 @@
         <a href="/" data-route-link>Articles</a>
         <a href="/map" data-route-link>Primitive Map</a>
         <a href="/article/the-primitive" data-route-link>Reader</a>
+        <a href="/metrics" data-route-link>Metrics</a>
       </nav>
       <a class="source-link" href="https://docs.google.com/document/d/1uefuLa-DUoFzvlmSFwC8kbj3hrRPAN7m/edit">
         Google Doc
@@ -232,6 +233,59 @@
           <div class="article-body" id="articleBody"></div>
         </article>
       </div>
+
+      <section class="metrics-section route-page" id="metrics" aria-labelledby="metrics-title" data-route-page="metrics">
+        <div class="section-heading">
+          <p class="kicker">Metric Calculation</p>
+          <h2 id="metrics-title">Views, Clicks, and Source Signals</h2>
+          <p>
+            Query first-party events for the reading room. Use tagged links like
+            <code>?src=linkedin_dm</code> to separate private LinkedIn message traffic from ordinary LinkedIn referrals.
+          </p>
+        </div>
+
+        <div class="metrics-layout">
+          <form class="metrics-query" id="metricsQuery" aria-label="Metric query controls">
+            <label>
+              Source
+              <input id="metricsSource" name="source" type="text" placeholder="linkedin_dm, linkedin, direct" />
+            </label>
+            <label>
+              Type
+              <select id="metricsType" name="type">
+                <option value="">All events</option>
+                <option value="view">Views</option>
+                <option value="click">Clicks</option>
+              </select>
+            </label>
+            <label>
+              Path
+              <input id="metricsPath" name="path" type="text" placeholder="/article/the-primitive" />
+            </label>
+            <button class="button primary" type="submit">Run Query</button>
+          </form>
+
+          <div class="metrics-cards" id="metricsCards" aria-label="Metric totals"></div>
+          <div class="metrics-table-wrap">
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>Source</th>
+                  <th>Path</th>
+                  <th>Signal</th>
+                </tr>
+              </thead>
+              <tbody id="metricsRows">
+                <tr>
+                  <td colspan="5">Run a query to load events.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
