@@ -67,7 +67,7 @@ const metricsPath = document.querySelector("#metricsPath");
 let currentPrior = "builder";
 let currentSiteMode = "technical";
 let currentPrimitivePhase = "observe";
-let currentKnowledgeNode = "primitive";
+let currentKnowledgeNode = "paper-one";
 let currentArticleSlug = "the-primitive";
 let lastTrackedView = "";
 
@@ -100,10 +100,10 @@ const siteCopy = {
     mapTitle: "The Skill Factory Is a Loop, Not a Prompt",
     seriesKicker: "Imported Harness Series",
     seriesTitle: "One Surface, 3 Harness Field Notes",
-    knowledgeKicker: "Primitive Source Tree",
-    knowledgeTitle: "Where the Primitive Comes From",
+    knowledgeKicker: "Lineage Map",
+    knowledgeTitle: "How the Harness Thread Branches",
     knowledgeIntro:
-      "A folder-style map of the two foundation papers, the harness layer they imply, and the article that sits on top.",
+      "A lineage graph of the shared harness paper, the Vishal and Akhil branches, and the loose ideas that may later reconnect as load-bearing pieces.",
     railTitle: "Reader Harness",
     footerLead:
       "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
@@ -122,10 +122,10 @@ const siteCopy = {
     mapTitle: "The Main Idea: Better Tools Create Better AI Work",
     seriesKicker: "Reading Path",
     seriesTitle: "3 Notes About Building Smarter AI Workflows",
-    knowledgeKicker: "Source Map",
-    knowledgeTitle: "The Article Is Built on 2 Earlier Ideas",
+    knowledgeKicker: "Lineage Map",
+    knowledgeTitle: "How the Ideas Split and Reconnect",
     knowledgeIntro:
-      "Think of this like a project folder: the article is the visible page, but underneath it are the papers and tool ideas that make it work.",
+      "The articles can look scattered in the moment. This map shows the shared starting point, the two branches, and how a loose idea can later plug a real gap.",
     railTitle: "Reader Guide",
     footerLead:
       "AGI Loading is a set of field notes on understanding self-learning systems at the harness and model level, extending",
@@ -141,103 +141,119 @@ const siteCopy = {
 
 const knowledgeMaps = {
   technical: {
-    primitive: {
-      type: "article",
-      title: "the-primitive",
-      summary:
-        "The Primitive is the synthesis layer: it asks what reusable unit should persist when AI work starts to improve the tools around itself.",
-      tags: ["CLI-backed primitive", "persistent behavior", "human review"],
-      flow: ["Paper 01 frames harnesses", "Paper 02 formalizes recursive search", "Primitive asks what should persist"]
-    },
-    papers: {
-      type: "folder",
-      title: "papers",
-      summary:
-        "The foundation folder. These papers supply the claims that a harness is more than a prompt and that recursive improvement can target the scaffold around the model.",
-      tags: ["source arguments", "research priors", "harness theory"],
-      flow: ["Define harness", "Define meta-loop", "Route both into the primitive"]
-    },
     "paper-one": {
-      type: "paper 01",
+      type: "shared root",
       title: "Autonomous Harness Engineering",
       summary:
-        "This paper establishes the inner/outer loop: a task harness runs the model, while a meta-layer inspects traces and rewrites the harness itself.",
-      tags: ["inner loop", "outer loop", "trace inspection"],
-      flow: ["Run task", "Capture trace", "Rewrite scaffold", "Evaluate next harness"]
+        "The root claim: the model is only one part of the intelligence system. The harness around it holds tools, traces, memory, context, and the outer loop that can learn from prior work.",
+      tags: ["shared origin", "harness layer", "outer loop"],
+      flow: ["Name the harness", "Make traces inspectable", "Ask what can improve", "Branch into applications"]
     },
-    "paper-two": {
-      type: "paper 02",
-      title: "Meta-Harness / arXiv 2603.28052v1",
+    vishal: {
+      type: "branch",
+      title: "Vishal's branch",
       summary:
-        "This paper makes the RSI move explicit: search over harness code and histories, evaluate candidates, and promote the next harness without changing the base model weights.",
-      tags: ["recursive self-improvement", "candidate harnesses", "Pareto frontier"],
-      flow: ["Read prior code + logs", "Propose delta H", "Score candidates", "Promote H_t+1"]
+        "This branch follows the harness idea into product infrastructure: recommendation systems, ranking surfaces, feedback loops, and the operational substrate where self-improvement becomes measurable.",
+      tags: ["infrastructure", "recommendations", "feedback systems"],
+      flow: ["Harness as product loop", "Signals become memory", "Ranking becomes steering", "Infrastructure learns"]
     },
-    harness: {
-      type: "runtime folder",
-      title: "harness-runtime",
+    recs: {
+      type: "field note",
+      title: "Harnesses as self-improving infrastructure",
       summary:
-        "The implementation layer implied by both papers: tools, memory, context, traces, state, evaluation gates, and rollback become first-class surfaces.",
-      tags: ["tools", "memory", "eval gates"],
-      flow: ["Tools + memory", "Trace store", "Quality signal", "Promotion gate"]
+        "A more focused product lens: recommendation harnesses show how models, metrics, retrieval, ranking, and user feedback form an adaptive system even before anyone calls it RSI.",
+      tags: ["focused", "product lens", "adaptive ranking"],
+      flow: ["Collect signals", "Generate candidates", "Rank outcomes", "Update the world model"]
     },
-    site: {
-      type: "surface",
-      title: "agi-loading.surface",
+    akhil: {
+      type: "branch",
+      title: "Akhil's branch",
       summary:
-        "The site turns the abstract dependency graph into a reader surface: imported field notes, interactive diagrams, and mode-aware explanations.",
-      tags: ["reader", "diagram layer", "site copy modes"],
-      flow: ["Import articles", "Map dependencies", "Expose diagrams", "Let readers switch modes"]
+        "This branch follows the same root into the question of primitives: if a harness can learn, what is the smallest reviewable unit that should persist across future work?",
+      tags: ["primitive search", "persistence", "reviewable units"],
+      flow: ["Trace repeated work", "Search for reusable units", "Separate skill from substrate", "Ask what should persist"]
+    },
+    primitive: {
+      type: "current leaf",
+      title: "The Primitive",
+      summary:
+        "The current synthesis: the primitive may not be a prompt or isolated skill, but a CLI-backed learning harness with state, evidence, review gates, and rollback.",
+      tags: ["focused now", "CLI-backed primitive", "RSI substrate"],
+      flow: ["Harness root", "Meta-loop pressure", "Persistent unit", "Primitive as substrate"]
+    },
+    unfocused: {
+      type: "drift zone",
+      title: "Loose threads",
+      summary:
+        "Some notes will look unfocused because they are exploring around the edge of the concept: metrics, social distribution, interfaces, evals, source maps, and reader priors.",
+      tags: ["exploration", "weak signal", "not wasted"],
+      flow: ["Notice side question", "Write partial note", "Leave trace", "Wait for missing context"]
+    },
+    "future-hole": {
+      type: "reconnect",
+      title: "Later, a missing hole appears",
+      summary:
+        "The dynamic version of this map should let a disconnected note snap back into the graph once a later article reveals the hole it fills. What looked like drift becomes lineage evidence.",
+      tags: ["dynamic graph", "latent dependency", "future synthesis"],
+      flow: ["New problem appears", "Old note becomes relevant", "Edge gets promoted", "Lineage updates"]
     }
   },
   plain: {
-    primitive: {
-      type: "article",
-      title: "the-primitive",
-      summary:
-        "This article asks a simple question: when an AI workflow gets better, what part should be saved so future work improves too?",
-      tags: ["main idea", "what should persist", "review before keeping"],
-      flow: ["Idea 1: tools around AI matter", "Idea 2: tools can improve themselves", "Article: what do we save?"]
-    },
-    papers: {
-      type: "folder",
-      title: "papers",
-      summary:
-        "This folder holds the two ideas underneath the article: first, AI needs a working setup around it; second, that setup can be tested and improved.",
-      tags: ["background", "2 source ideas", "foundation"],
-      flow: ["Understand the setup", "Understand improvement", "Build the article"]
-    },
     "paper-one": {
-      type: "paper 01",
+      type: "shared root",
       title: "Autonomous Harness Engineering",
       summary:
-        "The first idea: AI does better when it has a surrounding workbench of tools, memory, context, and feedback.",
-      tags: ["AI workbench", "tools + memory", "learning from attempts"],
-      flow: ["Do work", "Save what happened", "Notice failures", "Improve the workbench"]
+        "The starting idea: AI systems are not just models. They also include the workbench around the model: tools, memory, saved attempts, feedback, and tests.",
+      tags: ["starting point", "AI workbench", "learning setup"],
+      flow: ["Name the workbench", "Save attempts", "Look for improvement", "Branch into articles"]
     },
-    "paper-two": {
-      type: "paper 02",
-      title: "Meta-Harness / arXiv 2603.28052v1",
+    vishal: {
+      type: "branch",
+      title: "Vishal's branch",
       summary:
-        "The second idea: instead of only asking the model to be smarter, improve the workflow around the model and test better versions.",
-      tags: ["self-improvement", "better versions", "keep the winners"],
-      flow: ["Look at past attempts", "Make a better setup", "Test options", "Keep the best one"]
+        "Vishal's branch asks how this shows up in real product systems: recommendations, rankings, feedback, and infrastructure that keeps changing from signals.",
+      tags: ["product systems", "recommendations", "feedback"],
+      flow: ["Use signals", "Rank choices", "Learn from outcomes", "Improve the surface"]
     },
-    harness: {
-      type: "tool folder",
-      title: "harness-runtime",
+    recs: {
+      type: "field note",
+      title: "Harnesses as self-improving infrastructure",
       summary:
-        "This is the workbench: the tools, memory, saved history, tests, and review gates that make improvement possible.",
-      tags: ["tools", "saved history", "tests"],
-      flow: ["Choose tools", "Remember the run", "Check quality", "Approve or reject"]
+        "This note is more focused: it shows one concrete place where the harness idea matters, by looking at systems that recommend and adapt.",
+      tags: ["focused", "concrete example", "adaptive systems"],
+      flow: ["Collect feedback", "Generate options", "Rank them", "Change what users see"]
     },
-    site: {
-      type: "surface",
-      title: "agi-loading.surface",
+    akhil: {
+      type: "branch",
+      title: "Akhil's branch",
       summary:
-        "This website makes the map visible, so a reader can see how the article grows out of the earlier papers.",
-      tags: ["reader", "interactive map", "plain/technical modes"],
-      flow: ["Show the articles", "Show the source tree", "Explain the loop", "Let readers choose language"]
+        "Akhil's branch asks what should be saved when the workflow improves. Is it a skill, a tool, a checklist, a CLI, or something deeper?",
+      tags: ["open question", "what to save", "primitive"],
+      flow: ["Notice repeated work", "Ask what matters", "Find the smallest unit", "Make it reviewable"]
+    },
+    primitive: {
+      type: "current leaf",
+      title: "The Primitive",
+      summary:
+        "This is the current answer: the useful unit may be a small learning harness, not just a prompt. It needs memory, tests, review, and rollback.",
+      tags: ["current answer", "small useful unit", "reviewable"],
+      flow: ["Start from harnesses", "Look at self-improvement", "Ask what persists", "Name the primitive"]
+    },
+    unfocused: {
+      type: "loose ideas",
+      title: "Loose threads",
+      summary:
+        "Some articles may feel disconnected because they are exploring nearby questions. That is not always bad; it can be how the map finds the next gap.",
+      tags: ["exploration", "nearby ideas", "weak signal"],
+      flow: ["Ask side question", "Write the note", "Keep the trace", "See if it returns"]
+    },
+    "future-hole": {
+      type: "reconnect",
+      title: "Later, a missing hole appears",
+      summary:
+        "A future article may reveal that an older loose idea was actually important. The map should be able to reconnect that idea instead of treating it as noise.",
+      tags: ["future link", "hidden value", "dynamic map"],
+      flow: ["Find a new gap", "Remember old note", "Connect it back", "Update the lineage"]
     }
   }
 };
@@ -772,7 +788,7 @@ function renderPrimitiveDiagram(phase = "observe") {
 
 function renderKnowledgeMap(node = "primitive") {
   currentKnowledgeNode = node;
-  const item = knowledgeMaps[currentSiteMode][node] || knowledgeMaps[currentSiteMode].primitive;
+  const item = knowledgeMaps[currentSiteMode][node] || knowledgeMaps[currentSiteMode]["paper-one"];
 
   treeItems.forEach((treeItem) => {
     const isSelected = treeItem.dataset.knowledgeNode === node;
