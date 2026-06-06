@@ -47,6 +47,10 @@ a {
   text-decoration: none;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 a:hover {
   color: var(--accent);
 }
