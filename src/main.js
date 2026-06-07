@@ -71,6 +71,8 @@ let currentKnowledgeNode = "paper-one";
 let currentArticleSlug = "the-primitive";
 let lastTrackedView = "";
 
+const lastArticleKey = "agiLoadingLastArticleSlug";
+
 const formatDate = (date) =>
   new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -91,6 +93,24 @@ const escapeHtml = (value) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+
+const isArticleSlug = (slug) => articles.some((article) => article.slug === slug);
+
+function getLastArticleSlug() {
+  const storedSlug = window.localStorage.getItem(lastArticleKey);
+  return isArticleSlug(storedSlug) ? storedSlug : "";
+}
+
+function setLastArticleSlug(slug) {
+  if (isArticleSlug(slug)) {
+    window.localStorage.setItem(lastArticleKey, slug);
+  }
+}
+
+function getReaderPath() {
+  const lastArticleSlug = getLastArticleSlug();
+  return lastArticleSlug ? `/article/${lastArticleSlug}` : "/";
+}
 
 const siteCopy = {
   technical: {
@@ -247,6 +267,11 @@ function getRouteFromLocation() {
     return { name: "map", article: currentArticleSlug };
   }
 
+  if (path === "/reader") {
+    const lastArticleSlug = getLastArticleSlug();
+    return lastArticleSlug ? { name: "article", article: lastArticleSlug } : { name: "home", article: currentArticleSlug };
+  }
+
   if (path === "/source") {
     return { name: "home", article: currentArticleSlug };
   }
@@ -261,11 +286,15 @@ function getRouteFromLocation() {
 
 function updateRouteLinks(activeRoute) {
   routeLinks.forEach((link) => {
+    if (link.dataset.readerLink !== undefined) {
+      link.href = getReaderPath();
+    }
+
     const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, "") || "/";
     const isActive =
-      (activeRoute.name === "home" && linkPath === "/") ||
+      (activeRoute.name === "home" && linkPath === "/" && link.dataset.readerLink === undefined) ||
       (activeRoute.name === "map" && linkPath === "/map") ||
-      (activeRoute.name === "article" && linkPath.startsWith("/article/")) ||
+      (activeRoute.name === "article" && (linkPath.startsWith("/article/") || link.dataset.readerLink !== undefined)) ||
       (activeRoute.name === "metrics" && linkPath === "/metrics");
 
     link.classList.toggle("is-active", isActive);
@@ -287,6 +316,8 @@ function renderRoute(options = {}) {
 
   if (route.name === "article") {
     renderArticle(route.article);
+    setLastArticleSlug(currentArticleSlug);
+    updateRouteLinks(route);
   }
 
   if (route.name === "home") {
@@ -902,7 +933,7 @@ routeLinks.forEach((link) => {
     }
 
     event.preventDefault();
-    navigateTo(url.pathname);
+    navigateTo(link.dataset.readerLink !== undefined ? getReaderPath() : url.pathname);
   });
 });
 
