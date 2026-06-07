@@ -119,7 +119,7 @@ const siteCopy = {
     mapKicker: "Inspectable Substrate",
     mapTitle: "The Skill Factory Is a Loop, Not a Prompt",
     seriesKicker: "Imported Harness Series",
-    seriesTitle: "One Surface, 3 Harness Field Notes",
+    seriesTitle: "Meta Harness",
     knowledgeKicker: "Lineage Map",
     knowledgeTitle: "How the Harness Thread Branches",
     knowledgeIntro:
@@ -141,7 +141,7 @@ const siteCopy = {
     mapKicker: "Start Here",
     mapTitle: "The Main Idea: Better Tools Create Better AI Work",
     seriesKicker: "Reading Path",
-    seriesTitle: "3 Notes About Building Smarter AI Workflows",
+    seriesTitle: "Meta Harness",
     knowledgeKicker: "Lineage Map",
     knowledgeTitle: "How the Ideas Split and Reconnect",
     knowledgeIntro:
